@@ -10,6 +10,12 @@ import { MemberSuspended } from "../../events/impl/member/member-suspended.event
 import { MemberExpelled } from "../../events/impl/member/member-expelled.event";
 import { MemberResinstated } from "../../events/impl/member/member-reinstated.events";
 import { MemberMembershipTerminated } from "../../events/impl/member/member-membership-terminated.event";
+import { MemberSuspensionApealed } from "../../events/impl/member/member-suspension-apealed.event";
+import { MemberSuspensionApealAccepted } from "../../events/impl/member/member-suspension-appeal-accepted.event";
+import { MemberSuspensionApealRejected } from "../../events/impl/member/member-suspension-appeal-rejected.event";
+import { MemberExpulsionApealed } from "../../events/impl/member/member-expulsion-appealed.event";
+import { MemberExpulsionApealAccepted } from "../../events/impl/member/member-expulsion-appeal-accepted.event";
+import { MemberExpulsionApealRejected } from "../../events/impl/member/member-expulsion-appeal-rejected.event";
 
 export class Member extends AggregateRoot {
     public static readonly AGGREGATE_NAME = 'member';
@@ -29,6 +35,7 @@ export class Member extends AggregateRoot {
     private _joinDate: Date;
     private _membershipFees: MembershipFee[];
     private _status: MemberStatus;
+    private _appealDeadline?: Date;
 
     get cardNumber(): string {
         return this._cardNumber;
@@ -101,9 +108,9 @@ export class Member extends AggregateRoot {
         this.apply(updated);
     }
 
-    public suspendMember(suspendedDate: Date, suspendedUntil: Date, reason: string) {
+    public suspendMember(suspendedDate: Date, suspendedUntil: Date, reason: string, appealDeadline: Date) {
         this.mustHaveStatus(MemberStatus.Active);
-        var suspended = new MemberSuspended(this.id, suspendedDate, suspendedUntil, reason);
+        var suspended = new MemberSuspended(this.id, suspendedDate, suspendedUntil, reason, appealDeadline);
         this.apply(suspended);
     }
 
@@ -122,6 +129,44 @@ export class Member extends AggregateRoot {
     public terminateMembership() {
         this.mustBeInStatuses([MemberStatus.Active, MemberStatus.Expelled, MemberStatus.Suspended]);
         this.apply(new MemberMembershipTerminated(this.id));
+    }
+
+    public appealSuspension(justificative: string, appealDate: Date) {
+        this.mustHaveStatus(MemberStatus.Suspended);
+        if (!this.isBeBeforeDeadline(appealDate)) {
+            throw new Error('Cannot appeal suspension after deadline');
+        }
+        var appeal = new MemberSuspensionApealed(this.id, justificative, appealDate);
+        this.apply(appeal);
+    }
+
+    public acceptSuspensionAppeal() {
+        this.mustHaveStatus(MemberStatus.SuspensionAppealed);
+        this.apply(new MemberSuspensionApealAccepted(this.id));
+    }
+
+    public  rejectSuspensionAppeal() {
+        this.mustHaveStatus(MemberStatus.SuspensionAppealed);
+        this.apply(new MemberSuspensionApealRejected(this.id));
+    }
+
+    public appealExpulsion(justificative: string, appealDate: Date) {
+        this.mustHaveStatus(MemberStatus.Suspended);
+        if (!this.isBeBeforeDeadline(appealDate)) {
+            throw new Error('Cannot appeal suspension after deadline');
+        }
+        var appeal = new MemberExpulsionApealed(this.id, justificative, appealDate);
+        this.apply(appeal);
+    }
+
+    public acceptExpulsionAppeal() {
+        this.mustHaveStatus(MemberStatus.SuspensionAppealed);
+        this.apply(new MemberExpulsionApealAccepted(this.id));
+    }
+
+    public  rejectExpulsionAppeal() {
+        this.mustHaveStatus(MemberStatus.SuspensionAppealed);
+        this.apply(new MemberExpulsionApealRejected(this.id));
     }
 
     public onMemberCreated(event: MemberCreated): void {
@@ -169,6 +214,30 @@ export class Member extends AggregateRoot {
         this._status = MemberStatus.Terminated;
     }
 
+    public onMemberSuspensionApealed(event: MemberSuspensionApealed): void {
+        this._status = MemberStatus.SuspensionAppealed;
+    }
+
+    public onMemberSuspensionApealAccepted(event: MemberSuspensionApealAccepted): void {
+        this._status = MemberStatus.Active;
+    }
+
+    public onMemberSuspensionApealRejected(event: MemberSuspensionApealRejected): void {
+        this._status = MemberStatus.Suspended;
+    }
+
+    public onMemberExpulsionApealed(event: MemberExpulsionApealed): void {
+        this._status = MemberStatus.ExpulsionAppealed;
+    }   
+
+    public onMemberExpulsionApealAccepted(event: MemberExpulsionApealAccepted): void {
+        this._status = MemberStatus.Active;
+    }
+
+    public onMemberExpulsionApealRejected(event: MemberExpulsionApealRejected): void {
+        this._status = MemberStatus.Terminated;
+    }
+
     private mustHaveStatus(status: MemberStatus) {
         if (this._status !== status) {
             throw new Error(`Member status is not ${status}`);
@@ -191,6 +260,10 @@ export class Member extends AggregateRoot {
         if (this._membershipFees.some(fee => fee.year === year && fee.isBalanced())) {
             throw new Error(`Membership fee for year ${year} is already paid`);
         }
+    }
+
+    private isBeBeforeDeadline(date: Date): boolean {
+        return this._appealDeadline && date < this._appealDeadline;
     }
 
 }
