@@ -1,7 +1,6 @@
 import { AggregateRoot } from "@nestjs/cqrs";
 import { Address } from "../address.value-object";
 import { Recommendation } from "./recommendation.entity";
-import { Application } from "express";
 import { ApplicationFee } from "./application-fee.entity";
 import { ApplicantStatus } from './applicant-status.enum';
 import { ApplicantApplied } from "../../events/impl/applicant/applicant-applied.event";

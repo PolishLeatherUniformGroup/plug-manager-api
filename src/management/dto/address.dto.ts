@@ -18,7 +18,7 @@ export class AddressDto {
     house: string;
 
     @ApiPropertyOptional()
-    appartment?: string;
+    apartment?: string;
 
     @ApiPropertyOptional()
     region?: string;
