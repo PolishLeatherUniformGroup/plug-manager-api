@@ -6,7 +6,8 @@ import { Address as AddressModel } from "../model/applicants/address"
 @Injectable()
 export class MapperService {
 
-    public mapToDomainObject(addressDto: AddressDto | AddressModel): Address {
+    public mapToDomainObject(addressDto?: AddressDto | AddressModel): Address | undefined {
+        if (!addressDto) return undefined;
         return Address.create(
             addressDto.country,
             addressDto.city,

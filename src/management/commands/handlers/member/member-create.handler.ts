@@ -1,13 +1,13 @@
-import { ICommandHandler } from "@nestjs/cqrs";
+import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { MemberCreate } from "../../impl/member/member-create.command";
 import { MemberAggregateRepository } from "../../../domain/member/member.aggregate-repository";
 import { v4 as uuidv4 } from 'uuid';
 import { StoreEventPublisher } from "event-sourcing-nestjs";
-import { Applicant } from "../../../domain/applicant/applicant.aggregate";
 import { MapperService } from "../../../services/maper.service";
 import { Member } from "../../../domain/member/member.aggregate";
 import { MembersRepository } from "../../../repository/members.repository";
 
+@CommandHandler(MemberCreate)
 export class MemberCreateHandler implements ICommandHandler<MemberCreate> {
     constructor(private readonly membersRepository: MemberAggregateRepository,
         private readonly publisher: StoreEventPublisher,

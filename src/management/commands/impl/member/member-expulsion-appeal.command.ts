@@ -1,6 +1,6 @@
 import { ICommand } from "@nestjs/cqrs";
 
-export class MemberExpulsionAppealed implements ICommand {
+export class MemberExpulsionAppeal implements ICommand {
     constructor(
         public readonly id: string,
         public readonly appealDate: Date,

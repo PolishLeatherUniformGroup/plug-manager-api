@@ -114,9 +114,9 @@ export class Member extends AggregateRoot {
         this.apply(suspended);
     }
 
-    public expellMember(expelledDate: Date, reason: string) {
+    public expellMember(expelledDate: Date, reason: string, appealDeadline: Date) {
         this.mustHaveStatus(MemberStatus.Active);
-        var expelled = new MemberExpelled(this.id, expelledDate, reason);
+        var expelled = new MemberExpelled(this.id, expelledDate, reason, appealDeadline);
         this.apply(expelled);
     }
 
@@ -131,23 +131,23 @@ export class Member extends AggregateRoot {
         this.apply(new MemberMembershipTerminated(this.id));
     }
 
-    public appealSuspension(justificative: string, appealDate: Date) {
+    public appealSuspension(justification: string, appealDate: Date) {
         this.mustHaveStatus(MemberStatus.Suspended);
         if (!this.isBeBeforeDeadline(appealDate)) {
             throw new Error('Cannot appeal suspension after deadline');
         }
-        var appeal = new MemberSuspensionApealed(this.id, justificative, appealDate);
+        var appeal = new MemberSuspensionApealed(this.id, justification, appealDate);
         this.apply(appeal);
     }
 
-    public acceptSuspensionAppeal() {
+    public acceptSuspensionAppeal(acceptDate: Date) {
         this.mustHaveStatus(MemberStatus.SuspensionAppealed);
-        this.apply(new MemberSuspensionApealAccepted(this.id));
+        this.apply(new MemberSuspensionApealAccepted(this.id, acceptDate));
     }
 
-    public rejectSuspensionAppeal() {
+    public rejectSuspensionAppeal(rejectDate: Date, justification: string) {
         this.mustHaveStatus(MemberStatus.SuspensionAppealed);
-        this.apply(new MemberSuspensionApealRejected(this.id));
+        this.apply(new MemberSuspensionApealRejected(this.id, rejectDate, justification));
     }
 
     public appealExpulsion(justificative: string, appealDate: Date) {
@@ -159,12 +159,12 @@ export class Member extends AggregateRoot {
         this.apply(appeal);
     }
 
-    public acceptExpulsionAppeal() {
+    public acceptExpulsionAppeal(acceptDate: Date) {
         this.mustHaveStatus(MemberStatus.SuspensionAppealed);
-        this.apply(new MemberExpulsionApealAccepted(this.id));
+        this.apply(new MemberExpulsionApealAccepted(this.id, acceptDate));
     }
 
-    public rejectExpulsionAppeal() {
+    public rejectExpulsionAppeal(rejectDate: Date, justification: string) {
         this.mustHaveStatus(MemberStatus.SuspensionAppealed);
         this.apply(new MemberExpulsionApealRejected(this.id));
     }
