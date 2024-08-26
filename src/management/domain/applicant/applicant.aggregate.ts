@@ -13,8 +13,8 @@ import { ApplicantFeePaymentRequested } from "../../events/impl/applicant/applic
 import { ApplicantNotRecommended } from "../../events/impl/applicant/applicant-application-not-recommended.events";
 import { ApplicantFeePaid } from "../../events/impl/applicant/applicant-fee-paid.event";
 import { ApplicantApplicationAccepted } from "../../events/impl/applicant/applicant-application-accepted.event";
-import { ApplicantApplicationReject } from "../../events/impl/applicant/applicant-application-rejected.event";
-import { ApplicantAppealedRejction as ApplicantAppealRejection } from "../../events/impl/applicant/applicant-appealed-rejection.event";
+import { ApplicantApplicationRejected } from "../../events/impl/applicant/applicant-application-rejected.event";
+import { ApplicantAppealedRejection as ApplicantAppealRejection } from "../../events/impl/applicant/applicant-appealed-rejection.event";
 import { ApplicantAppealOverDeadline } from "../../events/impl/applicant/applicant-appeal-over-deadline.event";
 import { ApplicantAppealAccepted } from "../../events/impl/applicant/applicant-appeal-accepted.event";
 import { ApplicantAppealRejected } from "../../events/impl/applicant/applicant-appeal-rejected.event";
@@ -138,7 +138,7 @@ export class Applicant extends AggregateRoot {
 
     public rejectApplication(rejectDate: Date, justification: string, appealDeadline: Date) {
         this.mustBeInStatus(ApplicantStatus.AwaitDecision);
-        let rejected = new ApplicantApplicationReject(this.id, rejectDate, justification, appealDeadline);
+        let rejected = new ApplicantApplicationRejected(this.id, rejectDate, justification, appealDeadline);
         this.apply(rejected)
     }
 
@@ -222,7 +222,7 @@ export class Applicant extends AggregateRoot {
         this._status = ApplicantStatus.Accepted;
     }
 
-    public onApplicantApplicationReject(event: ApplicantApplicationReject) {
+    public onApplicantApplicationReject(event: ApplicantApplicationRejected) {
         this._status = ApplicantStatus.Rejected;
         this._appealDeadline = event.appealDeadline;
     }

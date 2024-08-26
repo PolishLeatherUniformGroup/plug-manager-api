@@ -143,6 +143,7 @@ export class Member extends AggregateRoot {
     public acceptSuspensionAppeal(acceptDate: Date) {
         this.mustHaveStatus(MemberStatus.SuspensionAppealed);
         this.apply(new MemberSuspensionApealAccepted(this.id, acceptDate));
+        this.apply(new MemberResinstated(this.id));
     }
 
     public rejectSuspensionAppeal(rejectDate: Date, justification: string) {
@@ -162,6 +163,7 @@ export class Member extends AggregateRoot {
     public acceptExpulsionAppeal(acceptDate: Date) {
         this.mustHaveStatus(MemberStatus.SuspensionAppealed);
         this.apply(new MemberExpulsionApealAccepted(this.id, acceptDate));
+        this.apply(new MemberResinstated(this.id));
     }
 
     public rejectExpulsionAppeal(rejectDate: Date, justification: string) {

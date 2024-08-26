@@ -2,7 +2,7 @@ import { StorableEvent } from "event-sourcing-nestjs";
 import { Applicant } from "../../../domain/applicant/applicant.aggregate";
 
 
-export class ApplicantApplicationReject extends StorableEvent {
+export class ApplicantApplicationRejected extends StorableEvent {
     eventAggregate = Applicant.AGGREGATE_NAME;
     eventVersion = 1;
 

@@ -32,7 +32,7 @@ export class Address extends ValueObject<AddressProps> {
     get region(): string | undefined {
         return this.props.region;
     }
-    get appartment(): string | undefined {
+    get apartment(): string | undefined {
         return this.props.appartment;
     }
 
