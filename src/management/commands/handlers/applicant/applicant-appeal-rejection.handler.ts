@@ -4,19 +4,23 @@ import { ApplicantAggregateRepository } from "../../../domain/applicant/applican
 import { StoreEventPublisher } from "event-sourcing-nestjs";
 
 @CommandHandler(ApplicantAppealRejection)
-export class ApplicantAppealRejectionHandler implements ICommandHandler<ApplicantAppealRejection> {
-    constructor(private readonly applicantRepository: ApplicantAggregateRepository,
-        private readonly publisher: StoreEventPublisher
-    ) { }
-    async execute(command: ApplicantAppealRejection): Promise<any> {
-        try {
-            var applicant = this.publisher.mergeObjectContext(await this.applicantRepository.getById(command.id));
-            applicant.appealRejection(command.appealDate, command.justification);
-            applicant.commit();
-        } catch (error) {
-            console.error(error);
-            throw error;
-        }
+export class ApplicantAppealRejectionHandler
+  implements ICommandHandler<ApplicantAppealRejection>
+{
+  constructor(
+    private readonly applicantRepository: ApplicantAggregateRepository,
+    private readonly publisher: StoreEventPublisher,
+  ) {}
+  async execute(command: ApplicantAppealRejection): Promise<any> {
+    try {
+      var applicant = this.publisher.mergeObjectContext(
+        await this.applicantRepository.getById(command.id),
+      );
+      applicant.appealRejection(command.appealDate, command.justification);
+      applicant.commit();
+    } catch (error) {
+      console.error(error);
+      throw error;
     }
-
+  }
 }

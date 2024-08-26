@@ -1,14 +1,13 @@
-import { StorableEvent } from 'event-sourcing-nestjs';
-import { Applicant } from '../../../domain/applicant/applicant.aggregate';
-
+import { StorableEvent } from "event-sourcing-nestjs";
+import { Applicant } from "../../../domain/applicant/applicant.aggregate";
 
 export class ApplicantFeePaid extends StorableEvent {
-    eventAggregate = Applicant.AGGREGATE_NAME;
-    eventVersion = 1;
-    constructor(
-        public readonly id: string,
-        public readonly paidDate: Date
-    ) {
-        super();
-    }
+  eventAggregate = Applicant.AGGREGATE_NAME;
+  eventVersion = 1;
+  constructor(
+    public readonly id: string,
+    public readonly paidDate: Date,
+  ) {
+    super();
+  }
 }

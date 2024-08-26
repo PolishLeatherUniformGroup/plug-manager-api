@@ -1,23 +1,23 @@
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
-import { StoreEventPublisher } from "event-sourcing-nestjs";
+import { MemberReinstate } from "../../impl/member/member-reinstate.command";
 import { MemberAggregateRepository } from "../../../domain/member/member.aggregate-repository";
-import { MemberRejectExpulsionAppeal } from "../../impl/member/member-reject-expulsion-appeal.command";
+import { StoreEventPublisher } from "event-sourcing-nestjs";
 
-@CommandHandler(MemberRejectExpulsionAppeal)
-export class MemberRejectExpulsionAppealHandler
-  implements ICommandHandler<MemberRejectExpulsionAppeal>
+@CommandHandler(MemberReinstate)
+export class MemberReinstateHandler
+  implements ICommandHandler<MemberReinstate>
 {
   constructor(
     private readonly memberRepository: MemberAggregateRepository,
     private readonly eventPublisher: StoreEventPublisher,
   ) {}
 
-  async execute(command: MemberRejectExpulsionAppeal) {
+  async execute(command: MemberReinstate) {
     try {
       var member = this.eventPublisher.mergeObjectContext(
         await this.memberRepository.getById(command.id),
       );
-      member.rejectExpulsionAppeal(command.rejectDate, command.justification);
+      member.reinstateMember(new Date());
       member.commit();
     } catch (e) {
       console.error(e);

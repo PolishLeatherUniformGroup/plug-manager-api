@@ -1,23 +1,29 @@
 import { IViewUpdater, ViewUpdaterHandler } from "event-sourcing-nestjs";
-import { ApplicantRecommendationsValid } from "../../impl/applicant/applicant-recommendations-valid.event";
 import { Repository } from "typeorm";
 import { Applicant } from "../../../model/applicants/applicant.model";
 import { ApplicantRecommendationApproved } from "../../impl/applicant/applicant-recommendation-approved.event";
-import { Recommendation } from "../../../model/applicants/recommendation.model";
+import { InjectRepository } from "@nestjs/typeorm";
 
 @ViewUpdaterHandler(ApplicantRecommendationApproved)
-export class ApplicantRecommendationApprovedHandler implements IViewUpdater<ApplicantRecommendationApproved> {
+export class ApplicantRecommendationApprovedHandler
+  implements IViewUpdater<ApplicantRecommendationApproved>
+{
+  constructor(
+    @InjectRepository(Applicant)
+    private readonly repository: Repository<Applicant>,
+  ) {}
 
-    constructor(private readonly repository: Repository<Recommendation>) { }
+  async handle(event: ApplicantRecommendationApproved): Promise<void> {
+    var applicant = await this.repository.findOne({
+      where: { id: event.id },
+      relations: ["recommendations"],
+    });
 
-    async handle(event: ApplicantRecommendationApproved): Promise<void> {
-        var recommendation = await this.repository
-            .findOne({
-                where: { id: event.recommendationId },
-                relations: ["user"]
-            });
-        recommendation.isRecommended = true;
+    var recommendation = applicant.recommendations.find(
+      (r) => r.id === event.recommendationId,
+    );
+    recommendation.isRecommended = true;
 
-        await this.repository.save(recommendation);
-    }
+    await this.repository.save(applicant);
+  }
 }

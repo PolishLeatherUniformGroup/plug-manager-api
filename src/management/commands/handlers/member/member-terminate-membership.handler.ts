@@ -4,21 +4,24 @@ import { MemberAggregateRepository } from "../../../domain/member/member.aggrega
 import { MemberTerminateMembership } from "../../impl/member/member-terminate-membership.command";
 
 @CommandHandler(MemberTerminateMembership)
-export class MemberTerminateMembershipHandler implements ICommandHandler<MemberTerminateMembership> {
-    constructor(
-        private readonly memberRepository: MemberAggregateRepository,
-        private readonly eventPublisher: StoreEventPublisher,
-    ) { }
+export class MemberTerminateMembershipHandler
+  implements ICommandHandler<MemberTerminateMembership>
+{
+  constructor(
+    private readonly memberRepository: MemberAggregateRepository,
+    private readonly eventPublisher: StoreEventPublisher,
+  ) {}
 
-    async execute(command: MemberTerminateMembership) {
-        try {
-            var member = this.eventPublisher.mergeObjectContext(await this.memberRepository.getById(command.id));
-            member.terminateMembership();
-            member.commit();
-        } catch (e) {
-            console.error(e);
-            throw e;
-        }
-
+  async execute(command: MemberTerminateMembership) {
+    try {
+      var member = this.eventPublisher.mergeObjectContext(
+        await this.memberRepository.getById(command.id),
+      );
+      member.terminateMembership();
+      member.commit();
+    } catch (e) {
+      console.error(e);
+      throw e;
     }
+  }
 }

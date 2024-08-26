@@ -4,21 +4,24 @@ import { MemberAggregateRepository } from "../../../domain/member/member.aggrega
 import { MemberSuspensionAppeal } from "../../impl/member/member-suspension-appeal.command";
 
 @CommandHandler(MemberSuspensionAppeal)
-export class MemberSuspensionAppealHandler implements ICommandHandler<MemberSuspensionAppeal> {
-    constructor(
-        private readonly memberRepository: MemberAggregateRepository,
-        private readonly eventPublisher: StoreEventPublisher,
-    ) { }
+export class MemberSuspensionAppealHandler
+  implements ICommandHandler<MemberSuspensionAppeal>
+{
+  constructor(
+    private readonly memberRepository: MemberAggregateRepository,
+    private readonly eventPublisher: StoreEventPublisher,
+  ) {}
 
-    async execute(command: MemberSuspensionAppeal) {
-        try {
-            var member = this.eventPublisher.mergeObjectContext(await this.memberRepository.getById(command.id));
-            member.appealSuspension(command.justification, command.appealDate);
-            member.commit();
-        } catch (e) {
-            console.error(e);
-            throw e;
-        }
-
+  async execute(command: MemberSuspensionAppeal) {
+    try {
+      var member = this.eventPublisher.mergeObjectContext(
+        await this.memberRepository.getById(command.id),
+      );
+      member.appealSuspension(command.justification, command.appealDate);
+      member.commit();
+    } catch (e) {
+      console.error(e);
+      throw e;
     }
+  }
 }

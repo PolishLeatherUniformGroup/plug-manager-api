@@ -13,18 +13,18 @@ import { ApplicantRecommendationsNotvalidHandler } from "./applicant-recommendat
 import { ApplicantRecommendationsValidHandler } from "./applicant-recommendations-valid.handler";
 
 export const ApplicantEventHandlers = [
-    ApplicantAppliedHandler,
-    ApplicantRecommendationsValidHandler,
-    ApplicantRecommendationsNotvalidHandler,
-    ApplicantRecommendationApprovedHandler,
-    ApplicantRecommendationRejectedHandler,
-    ApplicantFeePaymentRequestedHandler,
-    ApplicantFeePaidHandler,
-    ApplicantApplicationAcceptedHandler,
-    ApplicantApplicationRejectedHandler,
-    ApplicantAppealedRejectionHandler,
-    ApplicantNotRecommendedHandler,
-    ApplicantAppealAcceptedHandler,
-    ApplicantAppealedRejectionHandler,
-    ApplicantAppealOverDeadlineHandler
+  ApplicantAppliedHandler,
+  ApplicantRecommendationsValidHandler,
+  ApplicantRecommendationsNotvalidHandler,
+  ApplicantRecommendationApprovedHandler,
+  ApplicantRecommendationRejectedHandler,
+  ApplicantFeePaymentRequestedHandler,
+  ApplicantFeePaidHandler,
+  ApplicantApplicationAcceptedHandler,
+  ApplicantApplicationRejectedHandler,
+  ApplicantAppealedRejectionHandler,
+  ApplicantNotRecommendedHandler,
+  ApplicantAppealAcceptedHandler,
+  ApplicantAppealedRejectionHandler,
+  ApplicantAppealOverDeadlineHandler,
 ];

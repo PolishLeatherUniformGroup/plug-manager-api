@@ -1,22 +1,26 @@
 import { IViewUpdater, ViewUpdaterHandler } from "event-sourcing-nestjs";
 import { Repository } from "typeorm";
-import { Recommendation } from "../../../model/applicants/recommendation.model";
 import { ApplicantRecommendationRejected } from "../../impl/applicant/applicant-recommendation-rejected.event";
-import { ApplicantStatus } from "../../../domain/applicant/applicant-status.enum";
+import { Applicant } from "../../../model/applicants/applicant.model";
+import { InjectRepository } from "@nestjs/typeorm";
 
 @ViewUpdaterHandler(ApplicantRecommendationRejected)
-export class ApplicantRecommendationRejectedHandler implements IViewUpdater<ApplicantRecommendationRejected> {
-
-    constructor(private readonly repository: Repository<Recommendation>) { }
+export class ApplicantRecommendationRejectedHandler
+    implements IViewUpdater<ApplicantRecommendationRejected> {
+    constructor(
+        @InjectRepository(Applicant)
+        private readonly repository: Repository<Applicant>,
+    ) { }
 
     async handle(event: ApplicantRecommendationRejected): Promise<void> {
-        var recommendation = await this.repository
-            .findOne({
-                where: { id: event.recommendationId },
-                relations: ["user"]
-            });
-        recommendation.isRecommended = false;
+        var applicant = await this.repository.findOne({
+            where: { id: event.id },
+            relations: ["recommendations"],
+        });
+        applicant.recommendations.find(
+            (r) => r.id === event.recommendationId,
+        ).isRecommended = false;
 
-        await this.repository.save(recommendation);
+        await this.repository.save(applicant);
     }
 }

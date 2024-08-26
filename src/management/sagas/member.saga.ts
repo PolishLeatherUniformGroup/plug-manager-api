@@ -6,15 +6,14 @@ import { MemberRequestFeePayment } from "../commands/impl/member/member-request-
 
 @Injectable()
 export class MemberSaga {
-
-    @Saga()
-    reinstated = (events$: Observable<any>): Observable<ICommand> => {
-        return events$.pipe(
-            ofType(MemberResinstated),
-            map((event) => {
-                // TODO: Implement logic to decide if member need to pay fee
-                return new MemberRequestFeePayment(event.id, 1, 1, new Date());
-            }),
-        );
-    }
+  @Saga()
+  reinstated = (events$: Observable<any>): Observable<ICommand> => {
+    return events$.pipe(
+      ofType(MemberResinstated),
+      map((event) => {
+        // TODO: Implement logic to decide if member need to pay fee
+        return new MemberRequestFeePayment(event.id, 1, 1, new Date());
+      }),
+    );
+  };
 }

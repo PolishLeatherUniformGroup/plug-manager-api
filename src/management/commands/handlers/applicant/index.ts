@@ -8,18 +8,18 @@ import { ApplicantApplyHandler } from "./applicant-apply.handler";
 import { ApplicantApproveRecommendationHandler } from "./applicant-approve-recommendation.handler";
 import { ApplicantRejectApplicationHandler } from "./applicant-reject-application.handler";
 import { ApplicantRejectRecommendationHandler } from "./applicant-reject-recommendation.handler";
-import { ApplicantVerifyRecommendationsHandler } from './applicant-verify-recommendations.handler';
+import { ApplicantVerifyRecommendationsHandler } from "./applicant-verify-recommendations.handler";
 
 export const ApplicantCommandHandlers = [
-    ApplicantApplyHandler,
-    ApplicantVerifyRecommendationsHandler,
-    ApplicantApproveRecommendationHandler,
-    ApplicantRejectRecommendationHandler,
-    ApplicantFeePaymentRequestedHandler,
-    ApplicantFeePaidHandler,
-    ApplicantAcceptApplicationHandler,
-    ApplicantRejectApplicationHandler,
-    ApplicantAppealRejectionHandler,
-    ApplicantAppealAcceptHandler,
-    ApplicantRejectAppealHandler
+  ApplicantApplyHandler,
+  ApplicantVerifyRecommendationsHandler,
+  ApplicantApproveRecommendationHandler,
+  ApplicantRejectRecommendationHandler,
+  ApplicantFeePaymentRequestedHandler,
+  ApplicantFeePaidHandler,
+  ApplicantAcceptApplicationHandler,
+  ApplicantRejectApplicationHandler,
+  ApplicantAppealRejectionHandler,
+  ApplicantAppealAcceptHandler,
+  ApplicantRejectAppealHandler,
 ];
