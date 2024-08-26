@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { AddressDto } from '../dto/address.dto';
 import { Address } from "../domain/address.value-object";
-import { Address as AddressModel } from "../model/applicants/address"
+import { Address as AddressModel } from "../model/applicants/address.model"
 
 @Injectable()
 export class MapperService {

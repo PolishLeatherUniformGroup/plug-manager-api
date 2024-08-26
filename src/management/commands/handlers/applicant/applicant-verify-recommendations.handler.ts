@@ -1,12 +1,14 @@
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { ApplicantVerifyRecommendations } from "../../impl/applicant/applicant-verify-recommendations";
-import { MembersRepository } from '../../../repository/members.repository';
 import { StoreEventPublisher } from "event-sourcing-nestjs";
 import { ApplicantAggregateRepository } from "../../../domain/applicant/applicant.aggregate-repository";
+import { Member } from "../../../domain/member/member.aggregate";
+import { MemberService } from "../../../services/member.service";
+
 
 @CommandHandler(ApplicantVerifyRecommendations)
 export class ApplicantVerifyRecommendationsHandler implements ICommandHandler<ApplicantVerifyRecommendations> {
-    constructor(private repository: MembersRepository,
+    constructor(private mempberService: MemberService,
         private readonly applicantRepository: ApplicantAggregateRepository,
         private readonly publisher: StoreEventPublisher
 
@@ -19,7 +21,7 @@ export class ApplicantVerifyRecommendationsHandler implements ICommandHandler<Ap
             );
 
             var allValid = await applicant.recommendations.map(async (recommendation) => {
-                return await this.repository.exists(recommendation.cardNumber);
+                return await this.mempberService.exists(recommendation.cardNumber);
             }).filter(async (exists) => !exists).length == 0;
             applicant.validateRecommendations(allValid);
             applicant.commit();
