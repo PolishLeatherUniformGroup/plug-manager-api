@@ -36,9 +36,6 @@ export class Suspension {
   @Column()
   public finished: boolean;
 
-  @ManyToOne((type) => Member, (member) => member.suspensions, {
-    onDelete: "RESTRICT",
-    cascade: true,
-  })
+  @ManyToOne((type) => Member, (member) => member.suspensions)
   public member: Member;
 }

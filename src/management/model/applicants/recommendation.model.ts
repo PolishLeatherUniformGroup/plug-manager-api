@@ -15,9 +15,6 @@ export class Recommendation {
   @Column()
   public isRecommended?: boolean;
 
-  @ManyToOne((type) => Applicant, (applicant) => applicant.recommendations, {
-    cascade: true,
-    onDelete: "NO ACTION",
-  })
+  @ManyToOne((type) => Applicant, (applicant) => applicant.recommendations)
   public applicant: Applicant;
 }

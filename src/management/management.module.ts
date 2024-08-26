@@ -9,9 +9,11 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { Member } from "./model/members/member.model";
 import { Applicant } from "./model/applicants/applicant.model";
 import { MemberCard } from "./model/members/card.model";
+import { EventSourcingModule } from "event-sourcing-nestjs";
 
 @Module({
-  imports: [CqrsModule, TypeOrmModule.forFeature([Member, Applicant, MemberCard])],
+  imports: [CqrsModule, TypeOrmModule.forFeature([Member, Applicant, MemberCard]),
+    EventSourcingModule.forFeature()],
   controllers: [MembersController, ApplicantsController],
   providers: [...Services, ...ApplicantDomain, MembersScheduler],
 })

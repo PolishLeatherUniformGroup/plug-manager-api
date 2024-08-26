@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { AddressDto } from "../dto/address.dto";
+import { Address as AddressDto } from "../dto/address.dto";
 import { Address } from "../domain/address.value-object";
 import { Address as AddressModel } from "../model/address.model";
 

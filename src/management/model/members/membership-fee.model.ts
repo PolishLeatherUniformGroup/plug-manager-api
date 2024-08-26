@@ -21,9 +21,6 @@ export class MembershipFee {
   @Column()
   public paidDate?: Date;
 
-  @ManyToOne((type) => Member, (member) => member.membershipFees, {
-    cascade: true,
-    onDelete: "RESTRICT",
-  })
+  @ManyToOne((type) => Member, (member) => member.membershipFees)
   public member: Member;
 }

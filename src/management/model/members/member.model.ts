@@ -50,13 +50,13 @@ export class Member {
     cascade: true,
     onDelete: "CASCADE",
   })
-  public suspensions: Suspension[] = [];
+  public suspensions: Suspension[];
 
   @OneToMany((type) => Expulsion, (expulsion) => expulsion.member, {
     cascade: true,
     onDelete: "CASCADE",
   })
-  public expulsions: Expulsion[] = [];
+  public expulsions: Expulsion[];
 
   public currentSuspension(): Suspension | undefined {
     return this.suspensions.find((suspension) => suspension.finished === false);

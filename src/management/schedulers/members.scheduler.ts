@@ -1,18 +1,20 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { Cron } from "@nestjs/schedule";
 import { Repository } from "typeorm";
 import { Member } from "../model/members/member.model";
-import { CommandBus } from "@nestjs/cqrs";
+import { CommandBus, CqrsModule } from "@nestjs/cqrs";
 import { MemberStatus } from "../domain/member/member-status.enum";
 import { MemberReinstate } from "../commands/impl/member/member-reinstate.command";
 import { MemberTerminateMembership } from "../commands/impl/member/member-terminate-membership.command";
+import { InjectRepository } from "@nestjs/typeorm";
 
 @Injectable()
 export class MembersScheduler {
   constructor(
+    @InjectRepository(Member)
     private readonly repsoitory: Repository<Member>,
     private readonly commandBus: CommandBus,
-  ) {}
+  ) { }
 
   @Cron("0 2 * * *")
   async endSuspensions() {

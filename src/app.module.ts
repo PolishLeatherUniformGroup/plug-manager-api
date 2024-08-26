@@ -8,22 +8,19 @@ import { EventSourcingModule } from "event-sourcing-nestjs";
   imports: [
     ManagementModule,
     ScheduleModule.forRoot(),
+    EventSourcingModule.forRoot({ mongoURL: 'mongodb://localhost:27017' }),
     TypeOrmModule.forRoot({
       type: "mysql",
       host: "localhost",
-      port: 3306,
+      port: 7001,
       username: "root",
       password: "password",
       database: "plug_api",
-      "entities": [
+      entities: [
         "dist/**/*.model{.ts,.js}"
       ],
-      "synchronize": true
+      synchronize: true,
     }),
-    EventSourcingModule.forRoot({
-      mongoURL: 'mongodb://localhost:27017/eventstore',
-       
-    })
   ],
   controllers: [],
   providers: [],

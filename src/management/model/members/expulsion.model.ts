@@ -33,9 +33,6 @@ export class Expulsion {
   @Column()
   public finished: boolean;
 
-  @ManyToOne((type) => Member, (member) => member.expulsions, {
-    onDelete: "RESTRICT",
-    cascade: true,
-  })
+  @ManyToOne((type) => Member, (member) => member.expulsions)
   public member: Member;
 }
