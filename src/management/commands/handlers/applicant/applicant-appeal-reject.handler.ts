@@ -1,17 +1,17 @@
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { ApplicantAggregateRepository } from "../../../domain/applicant/applicant.aggregate-repository";
 import { StoreEventPublisher } from "event-sourcing-nestjs";
-import { ApplicantRejectApplication } from "../../impl/applicant/applicant-reject-application.command";
+import { ApplicantRejectAppeal } from "../../impl/applicant/applicabt-appeal-reject.command";
 
-@CommandHandler(ApplicantRejectApplication)
-export class ApplicantRejectApplicationHandler implements ICommandHandler<ApplicantRejectApplication> {
+@CommandHandler(ApplicantRejectAppeal)
+export class ApplicantRejectAppealHandler implements ICommandHandler<ApplicantRejectAppeal> {
     constructor(private readonly applicantRpository: ApplicantAggregateRepository,
         private readonly publisher: StoreEventPublisher
     ) { }
-    async execute(command: ApplicantRejectApplication): Promise<any> {
+    async execute(command: ApplicantRejectAppeal): Promise<any> {
         try {
             var applicant = this.publisher.mergeObjectContext(await this.applicantRpository.getById(command.id));
-            applicant.rejectApplication(command.rejectDate, command.justification, command.appealDeadline);
+            applicant.rejectAppeal(command.rejectDate, command.justification);
             applicant.commit();
         } catch (error) {
             console.error(error);

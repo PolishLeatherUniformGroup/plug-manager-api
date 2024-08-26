@@ -1,8 +1,9 @@
-import { ICommandHandler } from "@nestjs/cqrs";
+import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { ApplicantRegisterFeePayment } from "../../impl/applicant/applicant-register-fee-payment.command";
 import { ApplicantAggregateRepository } from "../../../domain/applicant/applicant.aggregate-repository";
 import { StoreEventPublisher } from "event-sourcing-nestjs";
 
+@CommandHandler(ApplicantRegisterFeePayment)
 export class ApplicantRegisterFeePaymentHandler implements ICommandHandler<ApplicantRegisterFeePayment> {
     constructor(private readonly applicantRepository: ApplicantAggregateRepository,
         private readonly publisher: StoreEventPublisher) {

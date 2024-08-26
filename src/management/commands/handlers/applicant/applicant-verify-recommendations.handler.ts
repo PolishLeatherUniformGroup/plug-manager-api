@@ -2,9 +2,7 @@ import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { ApplicantVerifyRecommendations } from "../../impl/applicant/applicant-verify-recommendations";
 import { StoreEventPublisher } from "event-sourcing-nestjs";
 import { ApplicantAggregateRepository } from "../../../domain/applicant/applicant.aggregate-repository";
-import { Member } from "../../../domain/member/member.aggregate";
 import { MemberService } from "../../../services/member.service";
-
 
 @CommandHandler(ApplicantVerifyRecommendations)
 export class ApplicantVerifyRecommendationsHandler implements ICommandHandler<ApplicantVerifyRecommendations> {
