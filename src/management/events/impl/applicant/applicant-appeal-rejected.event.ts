@@ -9,7 +9,8 @@ export class ApplicantAppealRejected extends StorableEvent {
 
     constructor(
         public readonly id: string,
-        public readonly rejectedDate: Date
+        public readonly rejectedDate: Date,
+        public readonly justification: string
     ) {
         super();
     }

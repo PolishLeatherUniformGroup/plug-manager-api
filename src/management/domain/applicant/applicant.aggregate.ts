@@ -164,7 +164,7 @@ export class Applicant extends AggregateRoot {
 
     public rejectAppeal(rejectDate: Date, justification: string) {
         this.mustBeInStatus(ApplicantStatus.Appealed);
-        let rejected = new ApplicantAppealRejected(this.id, rejectDate);
+        let rejected = new ApplicantAppealRejected(this.id, rejectDate, justification);
         this.apply(rejected);
     }
 
