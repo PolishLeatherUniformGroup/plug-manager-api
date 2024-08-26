@@ -1,8 +1,9 @@
-import { Body, Controller, Get, Param, Put } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { Body, Controller, Get, Param, Put, Query } from "@nestjs/common";
+import { ApiQuery, ApiTags } from "@nestjs/swagger";
 import { ContactData } from '../dto/requests/contact-data.request';
 import { MembershipFee } from "../dto/requests/membership-fee";
 import { MembershipFeePayment } from "../dto/requests/membership-fee-payment";
+import { MemberStatus } from "../domain/member/member-status.enum";
 
 
 @Controller("members")
@@ -26,6 +27,11 @@ export class MembersController {
 
     @Get(":idOrCard")
     public async getMember(@Param("idOrCard") idOrCard: string): Promise<void> {
+        throw new Error("Not implemented");
+    }
+    @Get()
+    @ApiQuery({ name: "status", enum: MemberStatus, required: false })
+    public async getMembers(@Query("status") status: MemberStatus): Promise<void> {
         throw new Error("Not implemented");
     }
 }
