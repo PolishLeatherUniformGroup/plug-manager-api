@@ -38,6 +38,9 @@ export class Member {
     @Column()
     public status: number;
 
+    @Column()
+    public terminationDate?: Date;
+
     @OneToMany(type => MembershipFee, membershipFee => membershipFee.member, {
         cascade: true,
         onDelete: 'CASCADE',
@@ -48,11 +51,11 @@ export class Member {
         cascade: true,
         onDelete: 'CASCADE',
     })
-    public suspensions: Suspension[];
+    public suspensions: Suspension[] = [];
 
     @OneToMany(type => Expulsion, expulsion => expulsion.member, {
         cascade: true,
         onDelete: 'CASCADE',
     })
-    public expulsions: Expulsion[]
+    public expulsions: Expulsion[] = [];
 }

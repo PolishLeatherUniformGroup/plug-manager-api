@@ -5,7 +5,7 @@ export class MemberResinstated extends StorableEvent {
     eventAggregate = Member.AGGREGATE_NAME;
     eventVersion = 1;
 
-    constructor(public readonly id: string) {
+    constructor(public readonly id: string, public readonly reinstatedDate: Date) {
         super();
     }
 }
