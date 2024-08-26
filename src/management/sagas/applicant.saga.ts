@@ -37,6 +37,7 @@ export class ApplicantSaga {
                     applicant.applyDate,
                     mapper.mapToDomainObject(applicant.address),
                     event.acceptedDate,
+                    0, // TODO: read from applicanr
                     applicant.phone,
                 );
             }),

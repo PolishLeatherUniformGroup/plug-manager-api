@@ -10,6 +10,7 @@ export class MemberCreate implements ICommand {
         public readonly applyDate: Date,
         public readonly address: Address,
         public readonly joinDate: Date,
+        public readonly paid:number,
         public readonly phone?: string,
     ) { }
 }

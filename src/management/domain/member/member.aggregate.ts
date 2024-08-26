@@ -81,7 +81,7 @@ export class Member extends AggregateRoot {
         return this._status;
     }
 
-    public static create(id: string, cardNumber: string, firstName: string, lastName: string, email: string, address: Address, applyDate: Date, birthDate: Date, joinDate: Date, paidAmount: number): Member {
+    public static create(id: string, cardNumber: string, firstName: string, lastName: string, email: string, address: Address, applyDate: Date, birthDate: Date, joinDate: Date, paidAmount: number, phone?: string): Member {
         const member = new Member(id);
         var created = new MemberCreated(id, cardNumber, firstName, lastName, email, address, applyDate, birthDate, joinDate, paidAmount);
         member.apply(created);
@@ -145,7 +145,7 @@ export class Member extends AggregateRoot {
         this.apply(new MemberSuspensionApealAccepted(this.id));
     }
 
-    public  rejectSuspensionAppeal() {
+    public rejectSuspensionAppeal() {
         this.mustHaveStatus(MemberStatus.SuspensionAppealed);
         this.apply(new MemberSuspensionApealRejected(this.id));
     }
@@ -164,7 +164,7 @@ export class Member extends AggregateRoot {
         this.apply(new MemberExpulsionApealAccepted(this.id));
     }
 
-    public  rejectExpulsionAppeal() {
+    public rejectExpulsionAppeal() {
         this.mustHaveStatus(MemberStatus.SuspensionAppealed);
         this.apply(new MemberExpulsionApealRejected(this.id));
     }
@@ -228,7 +228,7 @@ export class Member extends AggregateRoot {
 
     public onMemberExpulsionApealed(event: MemberExpulsionApealed): void {
         this._status = MemberStatus.ExpulsionAppealed;
-    }   
+    }
 
     public onMemberExpulsionApealAccepted(event: MemberExpulsionApealAccepted): void {
         this._status = MemberStatus.Active;
