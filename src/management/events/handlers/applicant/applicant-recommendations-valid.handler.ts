@@ -6,9 +6,8 @@ import { InjectRepository } from "@nestjs/typeorm";
 
 @ViewUpdaterHandler(ApplicantRecommendationsValid)
 export class ApplicantRecommendationsValidHandler
-  implements IViewUpdater<ApplicantRecommendationsValid>
-{
-  constructor(private readonly repository: Repository<Applicant>) {}
+  implements IViewUpdater<ApplicantRecommendationsValid> {
+  constructor(@InjectRepository(Applicant) private readonly repository: Repository<Applicant>) { }
 
   async handle(
     @InjectRepository(Applicant) event: ApplicantRecommendationsValid,

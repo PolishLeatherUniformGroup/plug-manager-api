@@ -8,10 +8,11 @@ import { MembersScheduler } from "./schedulers/members.scheduler";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Member } from "./model/members/member.model";
 import { Applicant } from "./model/applicants/applicant.model";
+import { MemberCard } from "./model/members/card.model";
 
 @Module({
-  imports: [CqrsModule, TypeOrmModule.forFeature([Member, Applicant])],
+  imports: [CqrsModule, TypeOrmModule.forFeature([Member, Applicant, MemberCard])],
   controllers: [MembersController, ApplicantsController],
   providers: [...Services, ...ApplicantDomain, MembersScheduler],
 })
-export class ManagementModule {}
+export class ManagementModule { }
