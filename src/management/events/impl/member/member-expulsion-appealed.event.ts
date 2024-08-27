@@ -5,7 +5,7 @@ export class MemberExpulsionApealed extends StorableEvent {
   eventVersion = 1;
   constructor(
     public readonly id: string,
-    public readonly justificative: string,
+    public readonly justification: string,
     public readonly appeal: Date,
   ) {
     super();

@@ -7,14 +7,14 @@ import { MemberExpulsionApealed } from "../../impl/member/member-expulsion-appea
 import { InjectRepository } from "@nestjs/typeorm";
 
 @ViewUpdaterHandler(MemberExpulsionApealed)
-export class MemberSuspensionApealedHandler
-  implements IViewUpdater<MemberSuspensionApealed> {
+export class MemberExpulsionApealedHandler
+  implements IViewUpdater<MemberExpulsionApealed> {
   constructor(
     @InjectRepository(Member)
     private readonly repository: Repository<Member>,
   ) { }
 
-  public async handle(event: MemberSuspensionApealed): Promise<void> {
+  public async handle(event: MemberExpulsionApealed): Promise<void> {
     const member = await this.repository.findOne({
       where: { id: event.id },
       relations: ["membershipFees", "expulsions"],
