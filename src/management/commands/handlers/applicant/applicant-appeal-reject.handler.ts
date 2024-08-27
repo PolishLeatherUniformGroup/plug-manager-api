@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { ApplicantAggregateRepository } from "../../../domain/applicant/applicant.aggregate-repository";
 import { StoreEventPublisher } from "event-sourcing-nestjs";
-import { ApplicantRejectAppeal } from "../../impl/applicant/applicabt-appeal-reject.command";
+import { ApplicantRejectAppeal } from "../../impl/applicant/applicant-appeal-reject.command";
 
 @CommandHandler(ApplicantRejectAppeal)
 export class ApplicantRejectAppealHandler

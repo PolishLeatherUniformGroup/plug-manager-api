@@ -3,6 +3,7 @@ import { ApplicantRecommendationsValid } from "../../impl/applicant/applicant-re
 import { Repository } from "typeorm";
 import { Applicant } from "../../../model/applicants/applicant.model";
 import { InjectRepository } from "@nestjs/typeorm";
+import { ApplicationStatus } from "../../../model/applicants/application-status.model";
 
 @ViewUpdaterHandler(ApplicantRecommendationsValid)
 export class ApplicantRecommendationsValidHandler
@@ -16,7 +17,12 @@ export class ApplicantRecommendationsValidHandler
       where: { id: event.id },
       relations: ["recommendations"],
     });
-    applicant.status = event.status;
+    let status =new ApplicationStatus();
+    status.status = event.status;
+    status.date = new Date();
+    status.applicant = applicant;
+
+    applicant.applicationStatuses.push(status);
     applicant.recommendations.forEach((recommendation) => {
       recommendation.isValid = true;
     });

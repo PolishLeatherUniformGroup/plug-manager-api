@@ -40,8 +40,8 @@ export class ApplicantSaga {
           applicant.applyDate,
           mapper.mapToDomainObject(applicant.address),
           event.acceptedDate,
-          applicant.applicationFee.paidAmount,
-          applicant.phone,
+          applicant.fee.paidAmount,
+          applicant.phoneNumber,
         );
       }),
     );

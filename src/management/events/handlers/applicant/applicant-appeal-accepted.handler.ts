@@ -4,6 +4,7 @@ import { Applicant } from "../../../model/applicants/applicant.model";
 import { ApplicantStatus } from "../../../domain/applicant/applicant-status.enum";
 import { ApplicantAppealAccepted } from "../../impl/applicant/applicant-appeal-accepted.event";
 import { InjectRepository } from "@nestjs/typeorm";
+import { ApplicationStatus } from "../../../model/applicants/application-status.model";
 
 @ViewUpdaterHandler(ApplicantAppealAccepted)
 export class ApplicantAppealAcceptedHandler
@@ -19,8 +20,13 @@ export class ApplicantAppealAcceptedHandler
       where: { id: event.id },
       relations: ["recommendations", "applicationProcess"],
     });
-    applicant.status = ApplicantStatus.Accepted;
     applicant.applicationProcess.appealAcceptDate = event.acceptedDate;
+
+    let status =new ApplicationStatus();
+    status.status = ApplicantStatus.Accepted;
+    status.date = new Date();
+    status.applicant = applicant;
+    applicant.applicationStatuses.push(status);
 
     await this.repository.save(applicant);
   }

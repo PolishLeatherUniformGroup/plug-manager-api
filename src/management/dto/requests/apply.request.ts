@@ -14,4 +14,8 @@ export class Apply {
     public address: AddressDto;
     @ApiProperty()
     public recommenders: string[];
+    @ApiProperty()
+    public applyDate: Date = new Date();
+    @ApiProperty()
+    public birthDate: Date;
 }

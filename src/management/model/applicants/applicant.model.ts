@@ -3,6 +3,7 @@ import { Address } from "../address.model";
 import { Recommendation } from "./recommendation.model";
 import { ApplicationFee } from "./application-fee.model";
 import { ApplicationProcess } from "./application-process.model";
+import { ApplicationStatus } from "./application-status.model";
 
 @Entity()
 export class Applicant {
@@ -27,8 +28,10 @@ export class Applicant {
   @Column()
   public applyDate: Date;
 
-  @Column()
-  public status: number;
+  public status():number{
+    this.applicationStatuses.sort((a, b) => a.date.getTime() - b.date.getTime());
+    return this.applicationStatuses[this.applicationStatuses.length - 1].status;
+  }
 
   @Column((type) => Address)
   public address: Address;
@@ -54,5 +57,12 @@ export class Applicant {
       onDelete: "CASCADE",
     },
   )
+
+  @OneToMany(type => ApplicationStatus, applicationStatus => applicationStatus.applicant, {
+    cascade: true,
+    onDelete: "CASCADE",
+  })
+  public applicationStatuses: ApplicationStatus[];
+
   public applicationProcess: ApplicationProcess;
 }

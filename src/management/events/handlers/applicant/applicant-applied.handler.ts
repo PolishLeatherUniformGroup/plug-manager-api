@@ -7,6 +7,7 @@ import { MapperService } from "../../../services/maper.service";
 import { Recommendation } from "../../../model/applicants/recommendation.model";
 import { ApplicationProcess } from "../../../model/applicants/application-process.model";
 import { InjectRepository } from "@nestjs/typeorm";
+import { ApplicationStatus } from "../../../model/applicants/application-status.model";
 
 @ViewUpdaterHandler(ApplicantApplied)
 export class ApplicantAppliedHandler implements IViewUpdater<ApplicantApplied> {
@@ -24,7 +25,7 @@ export class ApplicantAppliedHandler implements IViewUpdater<ApplicantApplied> {
     applicant.phone = event.phoneNumber;
     applicant.birthDate = event.birthDate;
     applicant.applyDate = event.applyDate;
-    applicant.status = ApplicantStatus.New;
+   
     applicant.address = this.mapper.mapToViewObject(event.address);
     applicant.applicationProcess = new ApplicationProcess();
     applicant.applicationProcess.applyDate = event.applyDate;
@@ -38,6 +39,12 @@ export class ApplicantAppliedHandler implements IViewUpdater<ApplicantApplied> {
         applicant: applicant,
       } as Recommendation;
     });
+
+    let status =new ApplicationStatus();
+    status.status = ApplicantStatus.New;
+    status.date = new Date();
+    status.applicant = applicant;
+    applicant.applicationStatuses = [status];
 
     await this.repository.save(applicant);
   }
