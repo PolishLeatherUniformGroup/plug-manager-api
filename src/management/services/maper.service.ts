@@ -30,12 +30,40 @@ import { ApplicationStatus } from "../model/applicants/application-status.model"
 import { ApplicationStatus as ApplicationStatusDto } from "../dto/responses/application-status";
 import { ApplicantStatus } from "../domain/applicant/applicant-status.enum";
 import { GetApplicants } from "../queries/impl/applicant/get-applicants.query";
-
+import { MembershipFee } from "../dto/requests/membership-fee";
+import { MemberRequestFeePayment } from "../commands/impl/member/member-request-fee-payment.command";
+import { MembershipFeePayment } from "../dto/requests/membership-fee-payment";
+import { MemberRegisterFeePayment } from "../commands/impl/member/member-register-fee-payment.command";
+import { Suspension } from "../dto/requests/suspension.request";
+import { Suspension as SuspensionModel } from './../model/members/suspension.model';
+import { MemberSuspendMembership } from "../commands/impl/member/member-suspend-membership.command";
+import { MemberSuspensionAppeal } from "../commands/impl/member/member-suspension-appeal.command";
+import { MemberAcceptSuspensionAppeal } from "../commands/impl/member/member-accept-suspension-appeal.command";
+import { MemberRejectSuspensionAppeal } from "../commands/impl/member/member-reject-suspension-appeal.commanf";
+import { Expulsion } from "../dto/requests/expulsion.request";
+import { MemberExpell } from "../commands/impl/member/member-expell.command";
+import { MemberExpulsionAppeal } from "../commands/impl/member/member-expulsion-appeal.command";
+import { MemberAcceptExpulsionAppeal } from "../commands/impl/member/member-accept-expulsion-appeal.command";
+import { MemberRejectExpulsionAppeal } from "../commands/impl/member/member-reject-expulsion-appeal.command";
+import { ContactData } from "../dto/requests/contact-data.request";
+import { MemberUpdateContactData } from "../commands/impl/member/member-update-contact-data.command";
+import { Member as MemberModel } from "../model/members/member.model";
+import { Member } from "../dto/responses/member";
+import { GetMember } from "../queries/impl/member/get-member.query";
+import { GetMembers } from "../queries/impl/member/get-members.query";
+import { MemberStatus } from "../domain/member/member-status.enum";
+import { GetMemberFees } from "../queries/impl/member/get-member-fees.query";
+import { YearlyFee } from "../dto/responses/yearly-fee";
+import { MembershipFee as MembershipFeeModel } from "../model/members/membership-fee.model";
+import { GetMemberSuspensions } from "../queries/impl/member/get-member-suspensions.query";
+import { GetMemberExpulsions } from "../queries/impl/member/get-member-expulsions.query";
+import { SuspensionHistory } from "../dto/responses/suspension-history";
+import { Expulsion as ExpulsionModel } from '../model/members/expulsion.model';
+import { ExpulsionHistory } from '../dto/responses/expulsion-history';
 
 @Injectable()
 export class MapperService {
-  
- 
+
   public mapToDomainObject(
     addressDto?: AddressDto | AddressModel,
   ): Address | undefined {
@@ -66,7 +94,7 @@ export class MapperService {
     } as AddressModel;
   }
 
-  public mapToDtot(
+  public mapToAddressDto(
     address?: Address | AddressModel,
   ): AddressDto | undefined {
     if (!address) return undefined;
@@ -137,7 +165,7 @@ export class MapperService {
       firstName: applicant.firstName,
       lastName: applicant.lastName,
       email: applicant.email,
-      address: this.mapToDtot(applicant.address),
+      address: this.mapToAddressDto(applicant.address),
       birthDate: applicant.birthDate,
       applyDate: applicant.applyDate,
       phoneNumber: applicant.phone,
@@ -216,5 +244,119 @@ export class MapperService {
   public buildGetApplicantsQuery(status?: number): GetApplicants {
     return new GetApplicants(status);
   }
-}
 
+  public mapToMemberFeeRequested(idOrCard: string, body: MembershipFee): MemberRequestFeePayment {
+    return new MemberRequestFeePayment(idOrCard, body.year, body.dueAmount, body.dueDate);
+  }
+
+  public mapToMemberFeePaymentRequested(idOrCard: string, year: number, body: MembershipFeePayment): MemberRegisterFeePayment {
+    return new MemberRegisterFeePayment(idOrCard, year, body.date, body.amount);
+  }
+
+  public mapToMemberSuspended(idOrCard: string, body: Suspension): MemberSuspendMembership {
+    return new MemberSuspendMembership(idOrCard, body.startDate, body.reason, body.endDate, body.appealDeadline);
+  }
+
+  public mapToMemberAppealSuspended(idOrCard: string, body: Appeal): MemberSuspensionAppeal {
+    return new MemberSuspensionAppeal(idOrCard, body.date, body.justification);
+  }
+
+  public mapToMemberSuspendedAppealDecision(idOrCard: string, body: AppealDecision): ICommand {
+    if (body.accepted) {
+      return new MemberAcceptSuspensionAppeal(idOrCard, body.date);
+    } else {
+      return new MemberRejectSuspensionAppeal(idOrCard, body.date, body.reason);
+    }
+  }
+
+  public mapToMemberExpelled(idOrCard: string, body: Expulsion): MemberExpell {
+    return new MemberExpell(idOrCard, body.startDate, body.reason, body.appealDeadline);
+  }
+
+  public mapToMemberAppealExpelled(idOrCard: string, body: Appeal): MemberExpulsionAppeal {
+    return new MemberExpulsionAppeal(idOrCard, body.date, body.justification);
+  }
+
+  public mapToMemberExpelledAppealDecision(idOrCard: string, body: AppealDecision): ICommand {
+    if (body.accepted) {
+      return new MemberAcceptExpulsionAppeal(idOrCard, body.date);
+    } else {
+      return new MemberRejectExpulsionAppeal(idOrCard, body.date, body.reason);
+    }
+  }
+
+  public mapToMemberContactDataUpdated(idOrCard: string, body: ContactData): ICommand {
+    return new MemberUpdateContactData(idOrCard, body.email, body.phone, this.mapToDomainObject(body.address));
+  }
+
+  public buildGetMemberQuery(idOrCard: string): GetMember {
+    return new GetMember(idOrCard);
+  }
+
+  public mapToMemberDto(member?: MemberModel): Member | null {
+    if (!member) return null;
+    return {
+      id: member.id,
+      cardNumber: member.cardNumber,
+      firstName: member.firstName,
+      lastName: member.lastName,
+      email: member.email,
+      phoneNumber: member.phoneNumber,
+      address: this.mapToAddressDto(member.address),
+    } as Member;
+  }
+
+  public buildGetMembersQuery(status?: MemberStatus): GetMembers {
+    return new GetMembers(status);
+  }
+
+  public buildGetMemberFeesQuery(idOrCard: string): GetMemberFees {
+    return new GetMemberFees(idOrCard);
+  }
+
+  public mapToYearlyFee(fee: MembershipFeeModel): YearlyFee {
+    return {
+      year: fee.year,
+      dueAmount: fee.dueAmount,
+      paidAmount: fee.paidAmount,
+      dueDate: fee.dueDate,
+      paidDate: fee.paidDate,
+    } as YearlyFee;
+  }
+
+  public buildGetMemberSuspensionsQuery(idOrCard: string): GetMemberSuspensions {
+    return new GetMemberSuspensions(idOrCard);
+  }
+
+  public buildGetMemberExpulsionsQuery(idOrCard: string): GetMemberExpulsions {
+    return new GetMemberExpulsions(idOrCard);
+  }
+
+  public mapToSuspension(suspension: SuspensionModel): SuspensionHistory {
+    return {
+      startDate: suspension.startDate,
+      reason: suspension.justification,
+      endDate: suspension.endDate,
+      appealDeadline: suspension.appealDeadline,
+      appealDate: suspension.appealDate,
+      appealJustification: suspension.appealJustification,
+      appealDecisionDate: !suspension.appealAcceptDate ? suspension.appealRejectDate : suspension.appealAcceptDate,
+      appealDecisionJustification: suspension.appealRejectionJustification,
+      appealDecision: suspension.finished && suspension.appealAcceptDate !== undefined,
+    } as SuspensionHistory;
+  }
+
+  public mapToExpulsion(suspension: ExpulsionModel): ExpulsionHistory {
+    return {
+      startDate: suspension.startDate,
+      reason: suspension.justification,
+      appealDeadline: suspension.appealDeadline,
+      appealDate: suspension.appealDate,
+      appealJustification: suspension.appealJustification,
+      appealDecisionDate: !suspension.appealAcceptDate ? suspension.appealRejectDate : suspension.appealAcceptDate,
+      appealDecisionJustification: suspension.appealRejectionJustification,
+      appealDecision: suspension.finished && suspension.appealAcceptDate !== undefined,
+    } as ExpulsionHistory;
+  }
+
+}
