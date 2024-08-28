@@ -22,14 +22,14 @@ export class Member {
   @Column()
   public email: string;
 
-  @Column()
+  @Column({ nullable: true })
   public phoneNumber?: string;
 
-  @Column()
-  public birthDate: Date;
+  @Column({ nullable: true })
+  public birthDate?: Date;
 
   @Column((type) => Address)
-  public address: Address;
+  public address?: Address;
 
   @Column()
   public joinDate: Date;
@@ -37,7 +37,7 @@ export class Member {
   @Column()
   public status: number;
 
-  @Column()
+  @Column({ nullable: true })
   public terminationDate?: Date;
 
   @OneToMany((type) => MembershipFee, (membershipFee) => membershipFee.member, {

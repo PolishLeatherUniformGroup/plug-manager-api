@@ -17,6 +17,7 @@ import { MemberExpulsionApealed } from "../../events/impl/member/member-expulsio
 import { MemberExpulsionApealAccepted } from "../../events/impl/member/member-expulsion-appeal-accepted.event";
 import { MemberExpulsionApealRejected } from "../../events/impl/member/member-expulsion-appeal-rejected.event";
 import { MemberId } from "./member-id";
+import { MemberImported } from "../../events/impl/member/member-imported.event";
 
 @Aggregate({ streamName: "member" })
 export class Member extends AggregateRoot {
@@ -30,7 +31,7 @@ export class Member extends AggregateRoot {
   private _lastName: string;
   private _email: string;
   private _phoneNumber?: string;
-  private _address: Address;
+  private _address?: Address;
   private _applyDate: Date;
   private _birthDate: Date;
   private _joinDate: Date;
@@ -82,17 +83,44 @@ export class Member extends AggregateRoot {
     return this._status;
   }
 
+  public static import(
+    id: MemberId,
+    cardNumber: string,
+    firstName: string,
+    lastName: string,
+    email: string,
+    joinDate: Date,
+    paidAmount: number,
+    birthDate?: Date,
+    phone?: string,
+  ) {
+    const member = new Member(id);
+    var created = new MemberImported(
+      id.value,
+      cardNumber,
+      firstName,
+      lastName,
+      email,
+      joinDate,
+      paidAmount,
+      birthDate,
+      phone
+    );
+    member.applyEvent(created);
+    return member;
+  }
   public static create(
     id: MemberId,
     cardNumber: string,
     firstName: string,
     lastName: string,
     email: string,
-    address: Address,
-    applyDate: Date,
-    birthDate: Date,
+
     joinDate: Date,
     paidAmount: number,
+    birthDate?: Date,
+    applyDate?: Date,
+    address?: Address,
     phone?: string,
   ): Member {
     const member = new Member(id);
@@ -250,6 +278,7 @@ export class Member extends AggregateRoot {
   }
 
   public onMemberCreated(event: MemberCreated): void {
+    console.log("MemberCreated", event);
     this._cardNumber = event.cardNumber;
     this._firstName = event.firstName;
     this._lastName = event.lastName;
@@ -332,6 +361,20 @@ export class Member extends AggregateRoot {
     event: MemberExpulsionApealRejected,
   ): void {
     this._status = MemberStatus.Terminated;
+  }
+
+  public onMemberImported(event: MemberImported): void {
+    this._cardNumber = event.cardNumber;
+    this._firstName = event.firstName;
+    this._lastName = event.lastName;
+    this._email = event.email;
+    this._phoneNumber = event.phoneNumber;
+    this._joinDate = event.joinDate;
+    this._birthDate = event.birthDate;
+    this._status = MemberStatus.Active;
+    this._membershipFees = [
+      new MembershipFee(new Date().getFullYear(), event.paid, new Date(new Date().getFullYear(), 0, 1)),
+    ];
   }
 
   private mustHaveStatus(status: MemberStatus) {

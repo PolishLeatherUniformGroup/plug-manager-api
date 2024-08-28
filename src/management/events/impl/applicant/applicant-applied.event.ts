@@ -18,7 +18,7 @@ export class ApplicantApplied implements IEvent {
 }
 
 @EventSerializer(ApplicantApplied)
-export class AccountOpenedEventSerializer implements IEventSerializer {
+export class ApplicantAppliedSerializer implements IEventSerializer {
   serialize({ id, firstName, lastName, email, phoneNumber, address, birthDate, applyDate, recommendations }: ApplicantApplied): IEventPayload<ApplicantApplied> {
     return {
       id,

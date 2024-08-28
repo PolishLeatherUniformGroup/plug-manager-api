@@ -2,7 +2,6 @@ import { ApplicantApplied } from "../../impl/applicant/applicant-applied.event";
 import { Repository } from "typeorm";
 import { Applicant } from "../../../model/applicants/applicant.model";
 import { ApplicantStatus } from "../../../domain/applicant/applicant-status.enum";
-import { MapperService } from "../../../services/maper.service";
 import { ApplicationProcess } from "../../../model/applicants/application-process.model";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ApplicationStatus } from "../../../model/applicants/application-status.model";
@@ -17,7 +16,6 @@ export class ApplicantAppliedHandler implements IEventHandler {
   constructor(
     @InjectRepository(Applicant)
     private readonly repository: Repository<Applicant>,
-    private readonly mapper: MapperService,
     private readonly commandBus: CommandBus,
   ) { }
   async handle(envelope: EventEnvelope<ApplicantApplied>): Promise<void> {

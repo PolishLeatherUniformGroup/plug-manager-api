@@ -18,6 +18,7 @@ import { MemberExpelled } from "./impl/member/member-expelled.event";
 import { MemberExpulsionApealAccepted } from "./impl/member/member-expulsion-appeal-accepted.event";
 import { MemberExpulsionApealRejected } from "./impl/member/member-expulsion-appeal-rejected.event";
 import { MemberExpulsionApealed } from "./impl/member/member-expulsion-appealed.event";
+import { MemberImported } from "./impl/member/member-imported.event";
 import { MemberMembershipFeePaid } from "./impl/member/member-membership-fee-paid.event";
 import { MemberMembershipFeePaymentRequested } from "./impl/member/member-membership-fee-payment-requested.event";
 import { MemberMembershipTerminated } from "./impl/member/member-membership-terminated.event";
@@ -55,5 +56,6 @@ export const Events = [
     MemberExpulsionApealed,
     MemberExpulsionApealAccepted,
     MemberExpulsionApealRejected,
-    MemberMembershipTerminated
+    MemberMembershipTerminated,
+    MemberImported
 ];

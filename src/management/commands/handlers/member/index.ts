@@ -11,8 +11,9 @@ import { MemberSuspensionAppealHandler } from "./member-suspension-appeal.handle
 import { MemberUpdateContactDataHandler } from "./member-update-contact-data.handler";
 import { MemberAcceptExpulsionAppealHandler } from './member-accept-expulsion-appeal.handler';
 import { MemberTerminateMembershipHandler } from './member-terminate-membership.handler';
+import { MemberImportHandler } from "./member-import.handler";
 
-export const MemberCommandHandlers=[
+export const MemberCommandHandlers = [
     MemberCreateHandler,
     MemberUpdateContactDataHandler,
     MemberRequestFeePaymentHandler,
@@ -26,5 +27,6 @@ export const MemberCommandHandlers=[
     MemberExpulsionAppealHandler,
     MemberAcceptExpulsionAppealHandler,
     MemberRejectSuspensionAppealHandler,
-    MemberTerminateMembershipHandler
+    MemberTerminateMembershipHandler,
+    MemberImportHandler
 ]

@@ -11,10 +11,10 @@ import { MemberId } from "../../../domain/member/member-id";
 @CommandHandler(MemberCreate)
 export class MemberCreateHandler implements ICommandHandler {
   constructor(
-    private readonly memberRepository: MemberAggregateRepository,   
+    private readonly memberRepository: MemberAggregateRepository,
     private readonly mapperService: MapperService,
     private readonly membersService: MemberService,
-  ) {}
+  ) { }
   async execute(command: MemberCreate): Promise<any> {
     try {
       const id = MemberId.generate();
@@ -30,19 +30,19 @@ export class MemberCreateHandler implements ICommandHandler {
         paid,
       } = command;
       var card = await this.membersService.nextCard();
-      const applicant =  Member.create(
-          id,
-          card,
-          firstName,
-          lastName,
-          email,
-          this.mapperService.mapToDomainObject(address),
-          applyDate,
-          birthDate,
-          joinDate,
-          paid,
-          phone,
-        );
+      const applicant = Member.create(
+        id,
+        card,
+        firstName,
+        lastName,
+        email,
+        joinDate,
+        paid,
+        applyDate,
+        birthDate,
+        this.mapperService.mapToDomainObject(address),
+        phone,
+      );
 
       await this.memberRepository.save(applicant);
     } catch (error) {
