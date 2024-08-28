@@ -1,19 +1,20 @@
-import { IViewUpdater, ViewUpdaterHandler } from "event-sourcing-nestjs";
+import { IEventHandler, EventHandler, EventEnvelope} from "@ocoda/event-sourcing";
 import { Repository } from "typeorm";
 import { Applicant } from "../../../model/applicants/applicant.model";
 import { ApplicantRecommendationApproved } from "../../impl/applicant/applicant-recommendation-approved.event";
 import { InjectRepository } from "@nestjs/typeorm";
 
-@ViewUpdaterHandler(ApplicantRecommendationApproved)
+@EventHandler(ApplicantRecommendationApproved)
 export class ApplicantRecommendationApprovedHandler
-  implements IViewUpdater<ApplicantRecommendationApproved>
+  implements IEventHandler
 {
   constructor(
     @InjectRepository(Applicant)
     private readonly repository: Repository<Applicant>,
   ) {}
 
-  async handle(event: ApplicantRecommendationApproved): Promise<void> {
+  async handle(envelope: EventEnvelope<ApplicantRecommendationApproved>): Promise<void> {
+    const event = envelope.payload;
     var applicant = await this.repository.findOne({
       where: { id: event.id },
       relations: ["recommendations"],

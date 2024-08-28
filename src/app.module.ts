@@ -1,14 +1,25 @@
-import { Module } from "@nestjs/common";
+import { Module, OnModuleInit } from "@nestjs/common";
 import { ManagementModule } from "./management/management.module";
 import { ScheduleModule } from "@nestjs/schedule";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { EventSourcingModule } from "event-sourcing-nestjs";
+import { EventSourcingModule, EventStore } from "@ocoda/event-sourcing";
 
 @Module({
   imports: [
     ManagementModule,
     ScheduleModule.forRoot(),
-    EventSourcingModule.forRoot({ mongoURL: 'mongodb://localhost:27017' }),
+    EventSourcingModule.forRoot({
+      eventStore:{
+        client: 'mongodb',
+        options: {
+          url: 'mongodb://localhost:27017',
+        },
+      },
+      snapshotStore:{
+        client: 'in-memory',
+      },
+      events: [],
+    }),
     TypeOrmModule.forRoot({
       type: "mysql",
       host: "localhost",
@@ -25,5 +36,9 @@ import { EventSourcingModule } from "event-sourcing-nestjs";
   controllers: [],
   providers: [],
 })
-export class AppModule {
+export class AppModule  implements OnModuleInit {
+  constructor(private readonly eventStore: EventStore) {}
+  onModuleInit(): any {
+    this.eventStore.setup();
+  }
 }

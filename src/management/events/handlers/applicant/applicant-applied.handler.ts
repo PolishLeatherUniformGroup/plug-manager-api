@@ -1,5 +1,4 @@
 import { ApplicantApplied } from "../../impl/applicant/applicant-applied.event";
-import { IViewUpdater, ViewUpdaterHandler } from "event-sourcing-nestjs";
 import { Repository } from "typeorm";
 import { Applicant } from "../../../model/applicants/applicant.model";
 import { ApplicantStatus } from "../../../domain/applicant/applicant-status.enum";
@@ -9,17 +8,19 @@ import { ApplicationProcess } from "../../../model/applicants/application-proces
 import { InjectRepository } from "@nestjs/typeorm";
 import { ApplicationStatus } from "../../../model/applicants/application-status.model";
 import { Logger } from "@nestjs/common";
+import { EventEnvelope, EventHandler, IEventHandler } from "@ocoda/event-sourcing";
 
-@ViewUpdaterHandler(ApplicantApplied)
-export class ApplicantAppliedHandler implements IViewUpdater<ApplicantApplied> {
+@EventHandler(ApplicantApplied)
+export class ApplicantAppliedHandler implements IEventHandler {
   private readonly logger = new Logger(ApplicantAppliedHandler.name);
   constructor(
     @InjectRepository(Applicant)
     private readonly repository: Repository<Applicant>,
     private readonly mapper: MapperService,
   ) { }
-  async handle(event: ApplicantApplied): Promise<void> {
-    this.logger.log(`Handling event ${event.constructor.name}`);
+  async handle(envelope: EventEnvelope<ApplicantApplied>): Promise<void> {
+
+    const event = envelope.payload;
     var applicant = new Applicant();
     applicant.id = event.id;
     applicant.firstName = event.firstName;

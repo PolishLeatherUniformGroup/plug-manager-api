@@ -1,19 +1,20 @@
-import { IViewUpdater, ViewUpdaterHandler } from "event-sourcing-nestjs";
+import { IEventHandler, EventHandler, EventEnvelope} from "@ocoda/event-sourcing";
 import { Repository } from "typeorm";
 import { Member } from "../../../model/members/member.model";
 import { MemberStatus } from "../../../domain/member/member-status.enum";
 import { MemberExpulsionApealAccepted } from "../../impl/member/member-expulsion-appeal-accepted.event";
 import { InjectRepository } from "@nestjs/typeorm";
 
-@ViewUpdaterHandler(MemberExpulsionApealAccepted)
+@EventHandler(MemberExpulsionApealAccepted)
 export class MemberExpulsionApealAcceptedHandler
-  implements IViewUpdater<MemberExpulsionApealAccepted> {
+  implements IEventHandler {
   constructor(
     @InjectRepository(Member)
     private readonly repository: Repository<Member>,
   ) { }
 
-  public async handle(event: MemberExpulsionApealAccepted): Promise<void> {
+  public async handle(envelope: EventEnvelope<MemberExpulsionApealAccepted>): Promise<void> {
+    const event = envelope.payload;
     const member = await this.repository.findOne({
       where: { id: event.id },
       relations: ["membershipFees", "expulsions"],

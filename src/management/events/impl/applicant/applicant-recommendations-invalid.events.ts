@@ -1,15 +1,10 @@
-import { StorableEvent } from "event-sourcing-nestjs";
-import { Applicant } from "../../../domain/applicant/applicant.aggregate";
 import { ApplicantStatus } from "../../../domain/applicant/applicant-status.enum";
+import { IEvent,Event } from '@ocoda/event-sourcing';
 
-export class ApplicantRecommendationsNotValid extends StorableEvent {
-  eventAggregate = Applicant.AGGREGATE_NAME;
-  eventVersion = 1;
-
+@Event('applicant-recommendations-validated-negative')
+export class ApplicantRecommendationsValidatedNegative implements IEvent {
   constructor(
     public readonly id: string,
     public readonly status: ApplicantStatus,
-  ) {
-    super();
-  }
+  ) {}
 }

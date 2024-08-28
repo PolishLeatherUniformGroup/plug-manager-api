@@ -1,12 +1,9 @@
-import { StorableEvent } from "event-sourcing-nestjs";
-import { Applicant } from "../../../domain/applicant/applicant.aggregate";
 import { Address } from "../../../domain/address.value-object";
 import { Recommendation } from "../../../domain/applicant/recommendation.entity";
+import { IEvent , Event} from "@ocoda/event-sourcing";
 
-export class ApplicantApplied extends StorableEvent {
-  eventAggregate = Applicant.AGGREGATE_NAME;
-  eventVersion = 1;
-
+@Event('applicant-applied')
+export class ApplicantApplied implements IEvent {
   constructor(
     public readonly id: string,
     public readonly firstName: string,
@@ -18,6 +15,5 @@ export class ApplicantApplied extends StorableEvent {
     public readonly recommendations: Recommendation[],
     public readonly phoneNumber?: string,
   ) {
-    super();
   }
 }
