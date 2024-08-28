@@ -4,7 +4,6 @@ import { Recommendation } from "./recommendation.entity";
 import { ApplicationFee } from "./application-fee.entity";
 import { ApplicantStatus } from "./applicant-status.enum";
 import { ApplicantApplied } from "../../events/impl/applicant/applicant-applied.event";
-import { v4 as uuidv4 } from "uuid";
 import { ApplicantRecommendationsValidatedNegative } from "../../events/impl/applicant/applicant-recommendations-invalid.events";
 import { ApplicantRecommendationsValidatedPositive } from "src/management/events/impl/applicant/applicant-recommendations-valid.event";
 import { ApplicantRecommendationApproved } from "../../events/impl/applicant/applicant-recommendation-approved.event";
@@ -96,9 +95,6 @@ export class Applicant extends AggregateRoot {
     phoneNumber?: string,
   ): Applicant {
     const applicant = new Applicant(id);
-    let recommenders = recommenderCards.map(
-      (card) => new Recommendation(uuidv4(), card),
-    );
     let appliedEvent = new ApplicantApplied(
       id.value,
       firstName,
@@ -107,7 +103,7 @@ export class Applicant extends AggregateRoot {
       address,
       birthDate,
       applyDate,
-      recommenders,
+      recommenderCards,
       phoneNumber,
     );
     applicant.applyEvent(appliedEvent);
@@ -137,10 +133,10 @@ export class Applicant extends AggregateRoot {
 
     let recommendationApproved = new ApplicantRecommendationApproved(
       this.id.value,
-      recommendation.id,
+      recommendation.cardNumber,
     );
     this.applyEvent(recommendationApproved);
-    if (this.isLastNotRecommended(recommendation.id)) {
+    if (this.isLastNotRecommended(recommendation.cardNumber)) {
       let paymentRequest = new ApplicantFeePaymentRequested(
         this.id.value,
         this.applicationFee.amount,
@@ -155,7 +151,7 @@ export class Applicant extends AggregateRoot {
 
     let recommendationRejected = new ApplicantRecommendationRejected(
       this.id.value,
-      recommendation.id,
+      recommendation.cardNumber,
     );
     this.applyEvent(recommendationRejected);
 
@@ -228,10 +224,10 @@ export class Applicant extends AggregateRoot {
     this._firstName = event.firstName;
     this._lastName = event.lastName;
     this._email = event.email;
-    this._address = event.address;
+    this._address = Address.create(event.address.country, event.address.city, event.address.postalCode, event.address.street, event.address.house, event.address.region, event.address.apartment);
     this._applyDate = event.applyDate;
     this._birthDate = event.birthDate;
-    this._recommendations = event.recommendations;
+    this._recommendations = event.recommendations.map(r => (new Recommendation(r)));
     this._phoneNumber = event.phoneNumber;
     this._status = ApplicantStatus.New;
   }
@@ -308,7 +304,6 @@ export class Applicant extends AggregateRoot {
   private getRecommendation(idOrCard: string): Recommendation {
     const recommendations = this._recommendations.filter(
       (recommendation) =>
-        recommendation.id === idOrCard ||
         recommendation.cardNumber === idOrCard,
     );
     if (recommendations.length == 0) {
@@ -323,7 +318,7 @@ export class Applicant extends AggregateRoot {
   private isLastNotRecommended(id: string): boolean {
     let otherNotRecommendedCount = this._recommendations.filter(
       (recommendation) =>
-        recommendation.id !== id && recommendation.isRecommended === false,
+        recommendation.cardNumber !== id && recommendation.isRecommended === false,
     ).length;
     return otherNotRecommendedCount === 0;
   }

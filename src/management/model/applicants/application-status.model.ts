@@ -5,17 +5,17 @@ import { Applicant } from "./applicant.model";
 export class ApplicationStatus {
 
     @PrimaryGeneratedColumn()
-    public id:number;
+    public id: number;
 
     @Column()
-    public status:number;
+    public status: number;
 
-    @Column()
-    public date:Date;
+    @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
+    public date: Date;
 
-    @Column()
-    public comment?:string;
+    @Column({ type: 'text', nullable: true })
+    public comment?: string;
 
-    @ManyToOne(type=>Applicant, applicant=>applicant.applicationStatuses)
-    public applicant:Applicant;
+    @ManyToOne(type => Applicant, applicant => applicant.applicationStatuses)
+    public applicant: Applicant;
 }

@@ -29,13 +29,13 @@
     "@nestjs/typeorm": "^10.0.2",
     "@ocoda/event-sourcing": "^1.0.0-beta.21",
     "mo": "^1.7.3",
-    "mongodb": "^6.8.0",
     "mysql2": "3.0.1",
     "reflect-metadata": "^0.2.0",
     "rimraf": "^3.0.0",
     "rxjs": "^7.8.1",
     "shallow-equal-object": "^1.1.1",
-    "typeorm": "^0.3.20"
+    "typeorm": "^0.3.20",
+    "mongodb": "^5.8.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",

@@ -1,4 +1,4 @@
-import { IEventHandler, EventHandler, EventEnvelope} from "@ocoda/event-sourcing";
+import { IEventHandler, EventHandler, EventEnvelope } from "@ocoda/event-sourcing";
 import { Repository } from "typeorm";
 import { Applicant } from "../../../model/applicants/applicant.model";
 import { ApplicantRecommendationsValidatedNegative } from "../../impl/applicant/applicant-recommendations-invalid.events";
@@ -13,11 +13,11 @@ export class ApplicantRecommendationsNotvalidHandler
         private readonly repository: Repository<Applicant>,
     ) { }
 
-    async handle(envelope: EventEnvelope< ApplicantRecommendationsValidatedNegative>): Promise<void> {
+    async handle(envelope: EventEnvelope<ApplicantRecommendationsValidatedNegative>): Promise<void> {
         const event = envelope.payload;
         var applicant = await this.repository.findOne({
             where: { id: event.id },
-            relations: ["recommendations"],
+            relations: ["recommendations", "applicationStatuses"],
         });
         let status = new ApplicationStatus();
         status.status = event.status;

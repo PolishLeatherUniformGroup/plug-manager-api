@@ -13,6 +13,6 @@ export class GetAwaitingRecommendationsHandler implements IQueryHandler<GetAwait
         });
         return applicants.filter((applicant) =>
             applicant.recommendations.some((recommendation) =>
-                recommendation.isRecommended !== true && (recommendation.cardNumber === query.cardOrId || recommendation.id === query.cardOrId)));
+                recommendation.isRecommended !== true && (recommendation.cardNumber === query.cardOrId )));
     }
 }

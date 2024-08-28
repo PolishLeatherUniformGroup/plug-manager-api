@@ -1,9 +1,11 @@
-import { Column, Entity, OneToMany, OneToOne, PrimaryColumn } from "typeorm";
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryColumn } from "typeorm";
 import { Address } from "../address.model";
 import { Recommendation } from "./recommendation.model";
 import { ApplicationFee } from "./application-fee.model";
 import { ApplicationProcess } from "./application-process.model";
 import { ApplicationStatus } from "./application-status.model";
+import { App } from "supertest/types";
+import { ApplicantAddress } from "./address.model";
 
 @Entity()
 export class Applicant {
@@ -28,12 +30,17 @@ export class Applicant {
   @Column()
   public applyDate: Date;
 
-  public status():number{
+  public status(): number {
     this.applicationStatuses.sort((a, b) => a.date.getTime() - b.date.getTime());
     return this.applicationStatuses[this.applicationStatuses.length - 1].status;
   }
 
-  @Column((type) => Address)
+  /*
+  @OneToOne((type) => ApplicantAddress, (applicantAddress) => applicantAddress.applicant, {
+    cascade: true,
+    onDelete: "CASCADE",
+  })
+  public address: ApplicantAddress;*/
   public address: Address;
 
   @OneToMany(
@@ -46,8 +53,8 @@ export class Applicant {
   )
   public recommendations: Recommendation[];
 
-  @Column((type) => ApplicationFee)
-  public applicationFee: ApplicationFee;
+  @OneToOne((type) => ApplicationFee, (applicationFee) => applicationFee.applicant, {})
+  public applicationFee?: ApplicationFee;
 
   @OneToOne(
     (type) => ApplicationProcess,
@@ -64,5 +71,6 @@ export class Applicant {
   })
   public applicationStatuses: ApplicationStatus[];
 
+  @OneToOne((type) => ApplicationProcess, (applicationProcess) => applicationProcess.applicant, {})
   public applicationProcess: ApplicationProcess;
 }

@@ -16,9 +16,11 @@ import { ManagementModule } from "./management/management.module";
         "dist/**/*.model{.ts,.js}"
       ],
       synchronize: true,
+      logger: 'advanced-console',
+      verboseRetryLog: true,
     }),
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule { }

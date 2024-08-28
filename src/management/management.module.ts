@@ -3,7 +3,6 @@ import { MembersController } from "./controllers/members.controller";
 import { ApplicantsController } from "./controllers/applicants.controller";
 import { Services } from "./services";
 import { ApplicantDomain } from "./domain/applicant";
-import { MembersScheduler } from "./schedulers/members.scheduler";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Member } from "./model/members/member.model";
 import { Applicant } from "./model/applicants/applicant.model";
@@ -11,9 +10,13 @@ import { MemberCard } from "./model/members/card.model";
 import { MemberDomain } from "./domain/member";
 import { EventSourcingModule, EventStore } from "@ocoda/event-sourcing";
 import { Events } from "./events";
+import { ApplicantAddress } from "./model/applicants/address.model";
+import { Recommendation } from "./model/applicants/recommendation.model";
+import { ApplicationProcess } from "./model/applicants/application-process.model";
+import { ApplicationStatus } from "./model/applicants/application-status.model";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Member, Applicant, MemberCard]),
+  imports: [TypeOrmModule.forFeature([Member, Applicant, MemberCard, ApplicantAddress, Recommendation, ApplicationProcess, ApplicationStatus]),
   EventSourcingModule.forRoot({
     eventStore:{
       client: 'mongodb',

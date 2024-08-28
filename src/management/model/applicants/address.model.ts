@@ -1,6 +1,10 @@
-import { Column } from "typeorm";
+import { ChildEntity, Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from "typeorm";
+import { Applicant } from "./applicant.model";
 
-export class Address {
+@Entity()
+export class ApplicantAddress {
+  @PrimaryColumn()
+  applicantId: string;
   @Column({ length: 50 })
   country: string;
 
@@ -21,4 +25,8 @@ export class Address {
 
   @Column({ length: 10, nullable: true })
   apartment?: string;
+
+  @OneToOne((type) => Applicant, (applicant) => applicant.address)
+  @JoinColumn({ name: "applicantId" })
+  applicant: Applicant
 }
