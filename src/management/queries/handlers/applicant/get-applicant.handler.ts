@@ -1,11 +1,11 @@
-import { IQueryHandler, QueryHandler } from "@nestjs/cqrs";
+import { IQueryHandler, QueryHandler } from "@ocoda/event-sourcing";
 import { GetApplicant } from "../../impl/applicant/get-applicant.query";
 import { Repository } from "typeorm";
 import { Applicant } from "../../../model/applicants/applicant.model";
 import { InjectRepository } from "@nestjs/typeorm";
 
 @QueryHandler(GetApplicant)
-export class GetApplicantHandler implements IQueryHandler<GetApplicant> {
+export class GetApplicantHandler implements IQueryHandler<GetApplicant,Applicant|null> {
 
   constructor(@InjectRepository(Applicant) private readonly repository: Repository<Applicant | null>) { }
 

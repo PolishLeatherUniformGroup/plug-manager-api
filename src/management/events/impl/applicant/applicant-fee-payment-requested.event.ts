@@ -1,14 +1,8 @@
-import { StorableEvent } from "event-sourcing-nestjs";
-import { Applicant } from "../../../domain/applicant/applicant.aggregate";
-
-export class ApplicantFeePaymentRequested extends StorableEvent {
-  eventAggregate = Applicant.AGGREGATE_NAME;
-  eventVersion = 1;
-
-  constructor(
+import { IEvent ,Event} from "@ocoda/event-sourcing";
+@Event('applicant-fee-payment-requested')
+export class ApplicantFeePaymentRequested implements IEvent {
+constructor(
     public readonly id: string,
     public readonly amount: number,
-  ) {
-    super();
-  }
+  ) {}
 }

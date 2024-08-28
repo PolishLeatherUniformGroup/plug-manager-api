@@ -6,7 +6,7 @@ import { Applicant } from '../../../model/applicants/applicant.model';
 import { Repository } from 'typeorm';
 
 @QueryHandler(GetApplicationStatus)
-export class GetApplicationStatusHandler implements IQueryHandler<GetApplicationStatus> {
+export class GetApplicationStatusHandler implements IQueryHandler<GetApplicationStatus, ApplicationStatus[]> {
     constructor(
         @InjectRepository(Applicant) private readonly repository: Repository<Applicant>,
     ) { }

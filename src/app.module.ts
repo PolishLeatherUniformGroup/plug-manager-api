@@ -1,14 +1,10 @@
 import { Module } from "@nestjs/common";
-import { ManagementModule } from "./management/management.module";
-import { ScheduleModule } from "@nestjs/schedule";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { EventSourcingModule } from "event-sourcing-nestjs";
+import { ManagementModule } from "./management/management.module";
 
 @Module({
   imports: [
     ManagementModule,
-    ScheduleModule.forRoot(),
-    EventSourcingModule.forRoot({ mongoURL: 'mongodb://localhost:27017' }),
     TypeOrmModule.forRoot({
       type: "mysql",
       host: "localhost",
@@ -20,10 +16,11 @@ import { EventSourcingModule } from "event-sourcing-nestjs";
         "dist/**/*.model{.ts,.js}"
       ],
       synchronize: true,
+      logger: 'advanced-console',
+      verboseRetryLog: true,
     }),
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule {
-}
+export class AppModule { }

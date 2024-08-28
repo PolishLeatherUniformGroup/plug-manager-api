@@ -1,4 +1,4 @@
-import { AggregateRoot } from "@nestjs/cqrs";
+import { Aggregate, AggregateRoot, ISnapshot } from "@ocoda/event-sourcing";
 import { Address } from "../address.value-object";
 import { MembershipFee } from "./membership-fee.entity";
 import { MemberCreated } from "../../events/impl/member/member-created.event";
@@ -16,11 +16,13 @@ import { MemberSuspensionApealRejected } from "../../events/impl/member/member-s
 import { MemberExpulsionApealed } from "../../events/impl/member/member-expulsion-appealed.event";
 import { MemberExpulsionApealAccepted } from "../../events/impl/member/member-expulsion-appeal-accepted.event";
 import { MemberExpulsionApealRejected } from "../../events/impl/member/member-expulsion-appeal-rejected.event";
+import { MemberId } from "./member-id";
+import { MemberImported } from "../../events/impl/member/member-imported.event";
 
+@Aggregate({ streamName: "member" })
 export class Member extends AggregateRoot {
-  public static readonly AGGREGATE_NAME = "member";
 
-  constructor(public readonly id: string) {
+  constructor(public readonly id: MemberId) {
     super();
   }
 
@@ -29,7 +31,7 @@ export class Member extends AggregateRoot {
   private _lastName: string;
   private _email: string;
   private _phoneNumber?: string;
-  private _address: Address;
+  private _address?: Address;
   private _applyDate: Date;
   private _birthDate: Date;
   private _joinDate: Date;
@@ -81,22 +83,49 @@ export class Member extends AggregateRoot {
     return this._status;
   }
 
-  public static create(
-    id: string,
+  public static import(
+    id: MemberId,
     cardNumber: string,
     firstName: string,
     lastName: string,
     email: string,
-    address: Address,
-    applyDate: Date,
-    birthDate: Date,
     joinDate: Date,
     paidAmount: number,
+    birthDate?: Date,
+    phone?: string,
+  ) {
+    const member = new Member(id);
+    var created = new MemberImported(
+      id.value,
+      cardNumber,
+      firstName,
+      lastName,
+      email,
+      joinDate,
+      paidAmount,
+      birthDate,
+      phone
+    );
+    member.applyEvent(created);
+    return member;
+  }
+  public static create(
+    id: MemberId,
+    cardNumber: string,
+    firstName: string,
+    lastName: string,
+    email: string,
+
+    joinDate: Date,
+    paidAmount: number,
+    birthDate?: Date,
+    applyDate?: Date,
+    address?: Address,
     phone?: string,
   ): Member {
     const member = new Member(id);
     var created = new MemberCreated(
-      id,
+      id.value,
       cardNumber,
       firstName,
       lastName,
@@ -107,7 +136,7 @@ export class Member extends AggregateRoot {
       joinDate,
       paidAmount,
     );
-    member.apply(created);
+    member.applyEvent(created);
     return member;
   }
 
@@ -118,12 +147,12 @@ export class Member extends AggregateRoot {
   ) {
     this.mustHaveStatus(MemberStatus.Active);
     var feeRequest = new MemberMembershipFeePaymentRequested(
-      this.id,
+      this.id.value,
       year,
       dueAmount,
       dueDate,
     );
-    this.apply(feeRequest);
+    this.applyEvent(feeRequest);
   }
 
   public registerMembershipFeePayment(
@@ -134,8 +163,8 @@ export class Member extends AggregateRoot {
     this.mustHaveStatus(MemberStatus.Active);
     this.feeMustBeRequested(year);
     this.feeMustNotBePaid(year);
-    var paid = new MemberMembershipFeePaid(this.id, year, paidAmount, paidDate);
-    this.apply(paid);
+    var paid = new MemberMembershipFeePaid(this.id.value, year, paidAmount, paidDate);
+    this.applyEvent(paid);
   }
 
   public updateContactData(
@@ -145,12 +174,12 @@ export class Member extends AggregateRoot {
   ) {
     this.mustHaveStatus(MemberStatus.Active);
     var updated = new MemberContactDataUpdated(
-      this.id,
+      this.id.value,
       email ?? this.email,
       phoneNumber ?? this._phoneNumber,
       address ?? this._address,
     );
-    this.apply(updated);
+    this.applyEvent(updated);
   }
 
   public suspendMember(
@@ -161,13 +190,13 @@ export class Member extends AggregateRoot {
   ) {
     this.mustHaveStatus(MemberStatus.Active);
     var suspended = new MemberSuspended(
-      this.id,
+      this.id.value,
       suspendedDate,
       suspendedUntil,
       reason,
       appealDeadline,
     );
-    this.apply(suspended);
+    this.applyEvent(suspended);
   }
 
   public expellMember(
@@ -177,18 +206,18 @@ export class Member extends AggregateRoot {
   ) {
     this.mustHaveStatus(MemberStatus.Active);
     var expelled = new MemberExpelled(
-      this.id,
+      this.id.value,
       expelledDate,
       reason,
       appealDeadline,
     );
-    this.apply(expelled);
+    this.applyEvent(expelled);
   }
 
   public reinstateMember(reisntateDate: Date) {
     this.mustBeInStatuses([MemberStatus.Expelled, MemberStatus.Suspended]);
-    var reinstated = new MemberResinstated(this.id, reisntateDate);
-    this.apply(reinstated);
+    var reinstated = new MemberResinstated(this.id.value, reisntateDate);
+    this.applyEvent(reinstated);
   }
 
   public terminateMembership(terminationDate: Date) {
@@ -197,7 +226,7 @@ export class Member extends AggregateRoot {
       MemberStatus.Expelled,
       MemberStatus.Suspended,
     ]);
-    this.apply(new MemberMembershipTerminated(this.id, terminationDate));
+    this.applyEvent(new MemberMembershipTerminated(this.id.value, terminationDate));
   }
 
   public appealSuspension(justification: string, appealDate: Date) {
@@ -206,23 +235,23 @@ export class Member extends AggregateRoot {
       throw new Error("Cannot appeal suspension after deadline");
     }
     var appeal = new MemberSuspensionApealed(
-      this.id,
+      this.id.value,
       justification,
       appealDate,
     );
-    this.apply(appeal);
+    this.applyEvent(appeal);
   }
 
   public acceptSuspensionAppeal(acceptDate: Date) {
     this.mustHaveStatus(MemberStatus.SuspensionAppealed);
-    this.apply(new MemberSuspensionApealAccepted(this.id, acceptDate));
-    this.apply(new MemberResinstated(this.id, acceptDate));
+    this.applyEvent(new MemberSuspensionApealAccepted(this.id.value, acceptDate));
+    this.applyEvent(new MemberResinstated(this.id.value, acceptDate));
   }
 
   public rejectSuspensionAppeal(rejectDate: Date, justification: string) {
     this.mustHaveStatus(MemberStatus.SuspensionAppealed);
-    this.apply(
-      new MemberSuspensionApealRejected(this.id, rejectDate, justification),
+    this.applyEvent(
+      new MemberSuspensionApealRejected(this.id.value, rejectDate, justification),
     );
   }
 
@@ -231,24 +260,25 @@ export class Member extends AggregateRoot {
     if (!this.isBeBeforeDeadline(appealDate)) {
       throw new Error("Cannot appeal suspension after deadline");
     }
-    var appeal = new MemberExpulsionApealed(this.id, justificative, appealDate);
-    this.apply(appeal);
+    var appeal = new MemberExpulsionApealed(this.id.value, justificative, appealDate);
+    this.applyEvent(appeal);
   }
 
   public acceptExpulsionAppeal(acceptDate: Date) {
     this.mustHaveStatus(MemberStatus.SuspensionAppealed);
-    this.apply(new MemberExpulsionApealAccepted(this.id, acceptDate));
-    this.apply(new MemberResinstated(this.id, acceptDate));
+    this.applyEvent(new MemberExpulsionApealAccepted(this.id.value, acceptDate));
+    this.applyEvent(new MemberResinstated(this.id.value, acceptDate));
   }
 
   public rejectExpulsionAppeal(rejectDate: Date, justification: string) {
     this.mustHaveStatus(MemberStatus.SuspensionAppealed);
-    this.apply(
-      new MemberExpulsionApealRejected(this.id, justification, rejectDate),
+    this.applyEvent(
+      new MemberExpulsionApealRejected(this.id.value, justification, rejectDate),
     );
   }
 
   public onMemberCreated(event: MemberCreated): void {
+    console.log("MemberCreated", event);
     this._cardNumber = event.cardNumber;
     this._firstName = event.firstName;
     this._lastName = event.lastName;
@@ -331,6 +361,20 @@ export class Member extends AggregateRoot {
     event: MemberExpulsionApealRejected,
   ): void {
     this._status = MemberStatus.Terminated;
+  }
+
+  public onMemberImported(event: MemberImported): void {
+    this._cardNumber = event.cardNumber;
+    this._firstName = event.firstName;
+    this._lastName = event.lastName;
+    this._email = event.email;
+    this._phoneNumber = event.phoneNumber;
+    this._joinDate = event.joinDate;
+    this._birthDate = event.birthDate;
+    this._status = MemberStatus.Active;
+    this._membershipFees = [
+      new MembershipFee(new Date().getFullYear(), event.paid, new Date(new Date().getFullYear(), 0, 1)),
+    ];
   }
 
   private mustHaveStatus(status: MemberStatus) {

@@ -4,9 +4,8 @@ import { Recommendation } from "./recommendation.entity";
 import { ApplicationFee } from "./application-fee.entity";
 import { ApplicantStatus } from "./applicant-status.enum";
 import { ApplicantApplied } from "../../events/impl/applicant/applicant-applied.event";
-import { v4 as uuidv4 } from "uuid";
-import { ApplicantRecommendationsNotValid } from "../../events/impl/applicant/applicant-recommendations-invalid.events";
-import { ApplicantRecommendationsValid } from "src/management/events/impl/applicant/applicant-recommendations-valid.event";
+import { ApplicantRecommendationsValidatedNegative } from "../../events/impl/applicant/applicant-recommendations-invalid.events";
+import { ApplicantRecommendationsValidatedPositive } from "src/management/events/impl/applicant/applicant-recommendations-valid.event";
 import { ApplicantRecommendationApproved } from "../../events/impl/applicant/applicant-recommendation-approved.event";
 import { ApplicantRecommendationRejected } from "../../events/impl/applicant/applicant-recommendation-rejected.event";
 import { ApplicantFeePaymentRequested } from "../../events/impl/applicant/applicant-fee-payment-requested.event";
@@ -18,12 +17,13 @@ import { ApplicantAppealedRejection as ApplicantAppealRejection } from "../../ev
 import { ApplicantAppealOverDeadline } from "../../events/impl/applicant/applicant-appeal-over-deadline.event";
 import { ApplicantAppealAccepted } from "../../events/impl/applicant/applicant-appeal-accepted.event";
 import { ApplicantAppealRejected } from "../../events/impl/applicant/applicant-appeal-rejected.event";
-import { AggregateRoot } from "@nestjs/cqrs";
+import { Aggregate, AggregateRoot } from "@ocoda/event-sourcing";
+import { ApplicantId } from "./applicant-id";
 
+@Aggregate({ streamName: "applicant" })
 export class Applicant extends AggregateRoot {
-  public static readonly AGGREGATE_NAME = "applicant";
 
-  constructor(public readonly id: string) {
+  constructor(public readonly id: ApplicantId) {
     super();
   }
 
@@ -84,7 +84,7 @@ export class Applicant extends AggregateRoot {
   }
 
   public static create(
-    id: string,
+    id: ApplicantId,
     firstName: string,
     lastName: string,
     email: string,
@@ -95,38 +95,35 @@ export class Applicant extends AggregateRoot {
     phoneNumber?: string,
   ): Applicant {
     const applicant = new Applicant(id);
-    let recommenders = recommenderCards.map(
-      (card) => new Recommendation(uuidv4(), card),
-    );
     let appliedEvent = new ApplicantApplied(
-      id,
+      id.value,
       firstName,
       lastName,
       email,
       address,
       birthDate,
       applyDate,
-      recommenders,
+      recommenderCards,
       phoneNumber,
     );
-    applicant.apply(appliedEvent);
+    applicant.applyEvent(appliedEvent);
     return applicant;
   }
 
   public validateRecommendations(valid: boolean) {
     this.mustBeInStatus(ApplicantStatus.New);
     if (valid) {
-      let validEvent = new ApplicantRecommendationsValid(
-        this.id,
+      let validEvent = new ApplicantRecommendationsValidatedPositive(
+        this.id.value,
         ApplicantStatus.InRecommendation,
       );
-      this.apply(validEvent);
+      this.applyEvent(validEvent);
     } else {
-      let invalidEvent = new ApplicantRecommendationsNotValid(
-        this.id,
+      let invalidEvent = new ApplicantRecommendationsValidatedNegative(
+        this.id.value,
         ApplicantStatus.Cancelled,
       );
-      this.apply(invalidEvent);
+      this.applyEvent(invalidEvent);
     }
   }
 
@@ -135,16 +132,16 @@ export class Applicant extends AggregateRoot {
     const recommendation = this.getRecommendation(idOrCard);
 
     let recommendationApproved = new ApplicantRecommendationApproved(
-      this.id,
-      recommendation.id,
+      this.id.value,
+      recommendation.cardNumber,
     );
-    this.apply(recommendationApproved);
-    if (this.isLastNotRecommended(recommendation.id)) {
+    this.applyEvent(recommendationApproved);
+    if (this.isLastNotRecommended(recommendation.cardNumber)) {
       let paymentRequest = new ApplicantFeePaymentRequested(
-        this.id,
+        this.id.value,
         this.applicationFee.amount,
       );
-      this.apply(paymentRequest);
+      this.applyEvent(paymentRequest);
     }
   }
 
@@ -153,25 +150,25 @@ export class Applicant extends AggregateRoot {
     const recommendation = this.getRecommendation(idOrCard);
 
     let recommendationRejected = new ApplicantRecommendationRejected(
-      this.id,
-      recommendation.id,
+      this.id.value,
+      recommendation.cardNumber,
     );
-    this.apply(recommendationRejected);
+    this.applyEvent(recommendationRejected);
 
-    let cancelApplication = new ApplicantNotRecommended(this.id);
-    this.apply(cancelApplication);
+    let cancelApplication = new ApplicantNotRecommended(this.id.value);
+    this.applyEvent(cancelApplication);
   }
 
   public registerApplicationFeePayment(paidDate: Date) {
     this.mustBeInStatus(ApplicantStatus.AwaitPayment);
-    let feePaid = new ApplicantFeePaid(this.id, paidDate);
-    this.apply(feePaid);
+    let feePaid = new ApplicantFeePaid(this.id.value, paidDate);
+    this.applyEvent(feePaid);
   }
 
   public acceptApplication(acceptDate: Date) {
     this.mustBeInStatus(ApplicantStatus.AwaitDecision);
-    let accepted = new ApplicantApplicationAccepted(this.id, acceptDate);
-    this.apply(accepted);
+    let accepted = new ApplicantApplicationAccepted(this.id.value, acceptDate);
+    this.applyEvent(accepted);
   }
 
   public rejectApplication(
@@ -181,12 +178,12 @@ export class Applicant extends AggregateRoot {
   ) {
     this.mustBeInStatus(ApplicantStatus.AwaitDecision);
     let rejected = new ApplicantApplicationRejected(
-      this.id,
+      this.id.value,
       rejectDate,
       justification,
       appealDeadline,
     );
-    this.apply(rejected);
+    this.applyEvent(rejected);
   }
 
   public appealRejection(appealDate: Date, justification: string) {
@@ -196,47 +193,47 @@ export class Applicant extends AggregateRoot {
     }
     if (this.isBeBeforeDeadline(appealDate)) {
       let appeal = new ApplicantAppealRejection(
-        this.id,
+        this.id.value,
         appealDate,
         justification,
       );
-      this.apply(appeal);
+      this.applyEvent(appeal);
     } else {
-      let appealOverDeadline = new ApplicantAppealOverDeadline(this.id);
-      this.apply(appealOverDeadline);
+      let appealOverDeadline = new ApplicantAppealOverDeadline(this.id.value);
+      this.applyEvent(appealOverDeadline);
     }
   }
 
   public acceptAppeal(acceptDate: Date) {
     this.mustBeInStatus(ApplicantStatus.Appealed);
-    let accepted = new ApplicantAppealAccepted(this.id, acceptDate);
-    this.apply(accepted);
+    let accepted = new ApplicantAppealAccepted(this.id.value, acceptDate);
+    this.applyEvent(accepted);
   }
 
   public rejectAppeal(rejectDate: Date, justification: string) {
     this.mustBeInStatus(ApplicantStatus.Appealed);
     let rejected = new ApplicantAppealRejected(
-      this.id,
+      this.id.value,
       rejectDate,
       justification,
     );
-    this.apply(rejected);
+    this.applyEvent(rejected);
   }
 
   public onApplicantApplied(event: ApplicantApplied) {
     this._firstName = event.firstName;
     this._lastName = event.lastName;
     this._email = event.email;
-    this._address = event.address;
+    this._address = Address.create(event.address.country, event.address.city, event.address.postalCode, event.address.street, event.address.house, event.address.region, event.address.apartment);
     this._applyDate = event.applyDate;
     this._birthDate = event.birthDate;
-    this._recommendations = event.recommendations;
+    this._recommendations = event.recommendations.map(r => (new Recommendation(r)));
     this._phoneNumber = event.phoneNumber;
     this._status = ApplicantStatus.New;
   }
 
   public onApplicantRecommendationsNotValid(
-    event: ApplicantRecommendationsNotValid,
+    event: ApplicantRecommendationsValidatedNegative,
   ) {
     this._status = event.status;
     this._recommendations.every((recommendation) => {
@@ -244,7 +241,7 @@ export class Applicant extends AggregateRoot {
     });
   }
 
-  public onApplicantRecommendationsValid(event: ApplicantRecommendationsValid) {
+  public onApplicantRecommendationsValid(event: ApplicantRecommendationsValidatedPositive) {
     this._status = event.status;
     this._recommendations.every((recommendation) => {
       recommendation.markInvalid();
@@ -307,7 +304,6 @@ export class Applicant extends AggregateRoot {
   private getRecommendation(idOrCard: string): Recommendation {
     const recommendations = this._recommendations.filter(
       (recommendation) =>
-        recommendation.id === idOrCard ||
         recommendation.cardNumber === idOrCard,
     );
     if (recommendations.length == 0) {
@@ -322,7 +318,7 @@ export class Applicant extends AggregateRoot {
   private isLastNotRecommended(id: string): boolean {
     let otherNotRecommendedCount = this._recommendations.filter(
       (recommendation) =>
-        recommendation.id !== id && recommendation.isRecommended === false,
+        recommendation.cardNumber !== id && recommendation.isRecommended === false,
     ).length;
     return otherNotRecommendedCount === 0;
   }

@@ -1,16 +1,12 @@
 export class Recommendation {
-  private _id: string;
   private _cardNumber: string;
   private _isValid?: boolean;
   private _isRecommended?: boolean;
 
-  constructor(id: string, cardNumber: string) {
-    this._id = id;
+  constructor(cardNumber: string, isValid?: boolean, isRecommended?: boolean) {
     this._cardNumber = cardNumber;
-  }
-
-  public get id(): string {
-    return this._id;
+    this._isValid = isValid;
+    this._isRecommended = isRecommended;
   }
 
   public get cardNumber(): string {
@@ -40,4 +36,5 @@ export class Recommendation {
   public markNotRecommended(): void {
     this._isRecommended = false;
   }
+
 }

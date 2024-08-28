@@ -13,6 +13,7 @@ import { Expulsion } from "../dto/requests/expulsion.request";
 import { YearlyFee } from "../dto/responses/yearly-fee";
 import { SuspensionHistory } from "../dto/responses/suspension-history";
 import { ExpulsionHistory } from "../dto/responses/expulsion-history";
+import { Import } from "../dto/requests/import";
 
 @Controller("members")
 @ApiTags("Management")
@@ -20,6 +21,11 @@ export class MembersController {
 
     constructor(private readonly memberService:MemberService) { }
 
+    @Put()
+    public async importMembers(@Body() body: Import): Promise<void> {
+        await this.memberService.importMembers(body);
+    }
+    
     @Post(":idOrCard/membership-fees")
     @ApiCreatedResponse()
     public async requestFee(@Param("idOrCard") idOrCard: string, @Body() body: MembershipFee): Promise<void> {

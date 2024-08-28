@@ -1,4 +1,4 @@
-import { IViewUpdater, ViewUpdaterHandler } from "event-sourcing-nestjs";
+import { IEventHandler, EventHandler, EventEnvelope} from "@ocoda/event-sourcing";
 import { Repository } from "typeorm";
 import { Member } from "../../../model/members/member.model";
 import { MapperService } from "../../../services/maper.service";
@@ -6,9 +6,9 @@ import { MemberMembershipFeePaymentRequested } from "../../impl/member/member-me
 import { MembershipFee } from "../../../model/members/membership-fee.model";
 import { InjectRepository } from "@nestjs/typeorm";
 
-@ViewUpdaterHandler(MemberMembershipFeePaymentRequested)
+@EventHandler(MemberMembershipFeePaymentRequested)
 export class MemberMembershipFeePaymentRequestedHandler
-  implements IViewUpdater<MemberMembershipFeePaymentRequested> {
+  implements IEventHandler {
   constructor(
     @InjectRepository(Member)
     private readonly repository: Repository<Member>,
@@ -16,8 +16,9 @@ export class MemberMembershipFeePaymentRequestedHandler
   ) { }
 
   public async handle(
-    event: MemberMembershipFeePaymentRequested,
+    envelope: EventEnvelope< MemberMembershipFeePaymentRequested>,
   ): Promise<void> {
+    const event = envelope.payload;
     const member = await this.repository.findOne({
       where: { id: event.id },
       relations: ["membershipFees"],

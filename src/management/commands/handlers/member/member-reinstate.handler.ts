@@ -1,24 +1,22 @@
-import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
+import { CommandHandler, ICommandHandler } from "@ocoda/event-sourcing";
 import { MemberReinstate } from "../../impl/member/member-reinstate.command";
 import { MemberAggregateRepository } from "../../../domain/member/member.aggregate-repository";
-import { StoreEventPublisher } from "event-sourcing-nestjs";
+import { MemberId } from "../../../domain/member/member-id";
+
 
 @CommandHandler(MemberReinstate)
 export class MemberReinstateHandler
-  implements ICommandHandler<MemberReinstate>
+  implements ICommandHandler
 {
   constructor(
     private readonly memberRepository: MemberAggregateRepository,
-    private readonly eventPublisher: StoreEventPublisher,
   ) {}
 
   async execute(command: MemberReinstate) {
     try {
-      var member = this.eventPublisher.mergeObjectContext(
-        await this.memberRepository.getById(command.id),
-      );
+      const member = await this.memberRepository.getById(MemberId.from(command.id));
       member.reinstateMember(new Date());
-      member.commit();
+      await this.memberRepository.save(member);
     } catch (e) {
       console.error(e);
       throw e;

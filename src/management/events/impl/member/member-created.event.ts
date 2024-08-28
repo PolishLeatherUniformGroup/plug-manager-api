@@ -1,10 +1,8 @@
-import { StorableEvent } from "event-sourcing-nestjs";
-import { Member } from "../../../domain/member/member.aggregate";
+import { IEvent ,Event} from "@ocoda/event-sourcing";
 import { Address } from "../../../domain/address.value-object";
 
-export class MemberCreated extends StorableEvent {
-  eventAggregate = Member.AGGREGATE_NAME;
-  eventVersion = 1;
+@Event('member-created')
+export class MemberCreated implements IEvent {
   constructor(
     public readonly id: string,
     public readonly cardNumber: string,
@@ -17,7 +15,5 @@ export class MemberCreated extends StorableEvent {
     public readonly joinDate: Date,
     public readonly paid: number,
     public readonly phoneNumber?: string,
-  ) {
-    super();
-  }
+  ) {}
 }

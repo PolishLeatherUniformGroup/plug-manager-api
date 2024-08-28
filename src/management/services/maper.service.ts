@@ -176,7 +176,7 @@ export class MapperService {
 
   public mapToRecommendationDto(recommendation: Recommendation): RecommendationDto {
     return {
-      id: recommendation.id,
+      id: recommendation.id.toString(),
       recommender: recommendation.cardNumber,
       accepted: recommendation.isRecommended
     } as RecommendationDto;

@@ -12,6 +12,7 @@ import { MemberExpulsionApealAcceptedHandler } from "./member-expulsion-appeal-a
 import { MemberExpulsionApealRejectedHandler } from "./member-expulsion-appeal-rejected.handler";
 import { MemberMembershipTerminatedHandler } from "./member-membership-terminated.handler";
 import { MemberSuspensionApealedHandler } from "./member-suspension-appealed.handler";
+import { MemberImportedHandler } from "./member-imported.handler";
 
 export const MemberEventHandlers = [
     MemberCreatedHandler,
@@ -27,5 +28,6 @@ export const MemberEventHandlers = [
     MemberExpulsionApealedHandler,
     MemberExpulsionApealAcceptedHandler,
     MemberExpulsionApealRejectedHandler,
-    MemberMembershipTerminatedHandler
+    MemberMembershipTerminatedHandler,
+    MemberImportedHandler
 ];

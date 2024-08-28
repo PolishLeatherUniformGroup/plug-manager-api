@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 @QueryHandler(GetMember)
-export class GetMemberHandler implements IQueryHandler<GetMember> {
+export class GetMemberHandler implements IQueryHandler<GetMember,Member|null> {
     constructor(
         @InjectRepository(Member) private readonly repository: Repository<Member>
     ) { }

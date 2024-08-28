@@ -1,4 +1,4 @@
-import { ValueObject } from "../shared/domain/value-object";
+import { ValueObject } from "@ocoda/event-sourcing";
 
 interface AddressProps {
   country: string;

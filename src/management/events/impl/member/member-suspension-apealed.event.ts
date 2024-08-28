@@ -1,13 +1,10 @@
-import { StorableEvent } from "event-sourcing-nestjs";
-import { Member } from "../../../domain/member/member.aggregate";
-export class MemberSuspensionApealed extends StorableEvent {
-  eventAggregate = Member.AGGREGATE_NAME;
-  eventVersion = 1;
+import { IEvent,Event } from "@ocoda/event-sourcing";
+
+@Event('member-suspension-apealed')
+export class MemberSuspensionApealed implements IEvent {
   constructor(
     public readonly id: string,
     public readonly justification: string,
     public readonly appeal: Date,
-  ) {
-    super();
-  }
+  ) {}
 }

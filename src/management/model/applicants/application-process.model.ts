@@ -1,10 +1,10 @@
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import { Applicant } from "./applicant.model";
 
 @Entity()
 export class ApplicationProcess {
-  @PrimaryGeneratedColumn()
-  public id: number;
+  @PrimaryColumn()
+  public applicantId: string;
 
   @Column()
   public applyDate: Date;
@@ -37,5 +37,6 @@ export class ApplicationProcess {
   public appealRejectDate?: Date;
 
   @OneToOne(() => Applicant, (applicant) => applicant.applicationProcess)
+  @JoinColumn({ name: "applicantId" })
   public applicant: Applicant;
 }

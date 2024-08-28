@@ -5,19 +5,23 @@ import { MemberCard } from "../model/members/card.model";
 import { InjectRepository } from "@nestjs/typeorm";
 import { MembershipFee } from "../dto/requests/membership-fee";
 import { MapperService } from "./maper.service";
-import { CommandBus, QueryBus } from "@nestjs/cqrs";
+import { CommandBus, QueryBus } from "@ocoda/event-sourcing";
 import { MembershipFeePayment } from "../dto/requests/membership-fee-payment";
 import { Suspension } from "../dto/requests/suspension.request";
 import { Appeal } from "../dto/requests/appeal.request";
 import { AppealDecision } from "../dto/requests/decision.request";
 import { Expulsion } from "../dto/requests/expulsion.request";
 import { ContactData } from "../dto/requests/contact-data.request";
-import {Member as MemberDto} from "../dto/responses/member";
+import { Member as MemberDto } from "../dto/responses/member";
 import { MemberStatus } from "../domain/member/member-status.enum";
 import { YearlyFee } from "../dto/responses/yearly-fee";
+import { Import } from "../dto/requests/import";
+import { MemberImport } from "../commands/impl/member/member-import.command";
 
 @Injectable()
 export class MemberService {
+
+
   constructor(
     @InjectRepository(Member)
     private readonly repository: Repository<Member>,
@@ -41,6 +45,11 @@ export class MemberService {
     card.last++;
     await this.cards.save(card);
     return `PLUG-${card.last.toString().padStart(4, "0")}`;
+  }
+
+  public async importMembers(body: Import) {
+    const commansd = new MemberImport(body.members);
+    await this.commandBus.execute(commansd);
   }
 
   public async requestFee(idOrCard: string, body: MembershipFee): Promise<void> {
@@ -90,29 +99,29 @@ export class MemberService {
 
   public async getMember(idOrCard: string): Promise<MemberDto | null> {
     let query = this.mapperService.buildGetMemberQuery(idOrCard);
-    let result =  await this.queryBus.execute(query);
+    let result = await this.queryBus.execute(query);
     return this.mapperService.mapToMemberDto(result);
   }
 
-  public async getMembers(status?:MemberStatus): Promise<MemberDto[]> {
+  public async getMembers(status?: MemberStatus): Promise<MemberDto[]> {
     let query = this.mapperService.buildGetMembersQuery();
     let results = await this.queryBus.execute(query);
     return results.map(r => this.mapperService.mapToMemberDto(r));
   }
 
-  public async getMemberFees(idOrCard:string): Promise<YearlyFee[]> {
+  public async getMemberFees(idOrCard: string): Promise<YearlyFee[]> {
     let query = this.mapperService.buildGetMemberFeesQuery(idOrCard);
     let results = await this.queryBus.execute(query);
     return results.map(r => this.mapperService.mapToYearlyFee(r));
   }
 
-  public async getMemberSuspensions(idOrCard:string): Promise<Suspension[]> {
+  public async getMemberSuspensions(idOrCard: string): Promise<Suspension[]> {
     let query = this.mapperService.buildGetMemberSuspensionsQuery(idOrCard);
     let results = await this.queryBus.execute(query);
     return results.map(r => this.mapperService.mapToSuspension(r));
   }
 
-  public async getMemberExpulsions(idOrCard:string): Promise<Expulsion[]> {
+  public async getMemberExpulsions(idOrCard: string): Promise<Expulsion[]> {
     let query = this.mapperService.buildGetMemberExpulsionsQuery(idOrCard);
     let results = await this.queryBus.execute(query);
     return results.map(r => this.mapperService.mapToExpulsion(r));
