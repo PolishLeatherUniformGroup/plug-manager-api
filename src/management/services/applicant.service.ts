@@ -1,6 +1,6 @@
 import { Apply } from "../dto/requests/apply.request";
 import { MapperService } from "./maper.service";
-import { CommandBus, QueryBus } from "@nestjs/cqrs";
+import { CommandBus, QueryBus } from "@ocoda/event-sourcing";
 import { RecommendationDecision } from "../dto/requests/recommendation-decision.request";
 import { ApplicationFee } from "../dto/requests/application-fee.request";
 import { AppealDecision, Decision } from "../dto/requests/decision.request";

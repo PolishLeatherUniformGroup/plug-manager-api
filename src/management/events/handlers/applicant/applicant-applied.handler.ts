@@ -8,7 +8,8 @@ import { ApplicationProcess } from "../../../model/applicants/application-proces
 import { InjectRepository } from "@nestjs/typeorm";
 import { ApplicationStatus } from "../../../model/applicants/application-status.model";
 import { Logger } from "@nestjs/common";
-import { EventEnvelope, EventHandler, IEventHandler } from "@ocoda/event-sourcing";
+import { CommandBus, EventEnvelope, EventHandler, IEventHandler } from "@ocoda/event-sourcing";
+import { ApplicantVerifyRecommendations } from "../../../commands/impl/applicant/applicant-verify-recommendations";
 
 @EventHandler(ApplicantApplied)
 export class ApplicantAppliedHandler implements IEventHandler {
@@ -17,6 +18,7 @@ export class ApplicantAppliedHandler implements IEventHandler {
     @InjectRepository(Applicant)
     private readonly repository: Repository<Applicant>,
     private readonly mapper: MapperService,
+    private readonly commandBus: CommandBus,
   ) { }
   async handle(envelope: EventEnvelope<ApplicantApplied>): Promise<void> {
 
@@ -51,5 +53,7 @@ export class ApplicantAppliedHandler implements IEventHandler {
     applicant.applicationStatuses = [status];
 
     await this.repository.save(applicant);
+    const command =new ApplicantVerifyRecommendations(event.id);
+    await this.commandBus.execute(command);
   }
 }

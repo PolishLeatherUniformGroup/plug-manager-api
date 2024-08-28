@@ -1,5 +1,5 @@
 import { Module, OnModuleInit } from "@nestjs/common";
-import { ManagementModule } from "./management/management.module";
+import { Events as ManagementEvents, ManagementModule } from "./management/management.module";
 import { ScheduleModule } from "@nestjs/schedule";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { EventSourcingModule, EventStore } from "@ocoda/event-sourcing";
@@ -12,10 +12,10 @@ import { EventSourcingModule, EventStore } from "@ocoda/event-sourcing";
       eventStore:{
         client: 'mongodb',
         options: {
-          url: 'mongodb://localhost:27017',
+          url: 'mongodb://localhost:27017/evets',
         },
       },
-      events: [],
+      events: [...ManagementEvents],
     }),
     TypeOrmModule.forRoot({
       type: "mysql",

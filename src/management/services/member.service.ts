@@ -5,7 +5,7 @@ import { MemberCard } from "../model/members/card.model";
 import { InjectRepository } from "@nestjs/typeorm";
 import { MembershipFee } from "../dto/requests/membership-fee";
 import { MapperService } from "./maper.service";
-import { CommandBus, QueryBus } from "@nestjs/cqrs";
+import { CommandBus, QueryBus } from "@ocoda/event-sourcing";
 import { MembershipFeePayment } from "../dto/requests/membership-fee-payment";
 import { Suspension } from "../dto/requests/suspension.request";
 import { Appeal } from "../dto/requests/appeal.request";

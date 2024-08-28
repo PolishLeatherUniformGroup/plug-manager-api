@@ -6,7 +6,7 @@ import { ApplicantNotFoundException } from "./applicant-not-found-exception";
 import { Injectable } from "@nestjs/common";
 
 @Injectable()
-export class MemberAggregateRepository implements IAggregateRepository<Applicant> {
+export class ApplicantAggregateRepository implements IAggregateRepository<Applicant> {
 
   constructor(private readonly eventStore: EventStore) {}
   async save(aggregate: Applicant): Promise<void> {
