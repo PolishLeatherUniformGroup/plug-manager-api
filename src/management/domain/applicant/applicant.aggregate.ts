@@ -1,4 +1,4 @@
-import { AggregateRoot } from "@nestjs/cqrs";
+
 import { Address } from "../address.value-object";
 import { Recommendation } from "./recommendation.entity";
 import { ApplicationFee } from "./application-fee.entity";
@@ -18,6 +18,7 @@ import { ApplicantAppealedRejection as ApplicantAppealRejection } from "../../ev
 import { ApplicantAppealOverDeadline } from "../../events/impl/applicant/applicant-appeal-over-deadline.event";
 import { ApplicantAppealAccepted } from "../../events/impl/applicant/applicant-appeal-accepted.event";
 import { ApplicantAppealRejected } from "../../events/impl/applicant/applicant-appeal-rejected.event";
+import { AggregateRoot } from "@nestjs/cqrs";
 
 export class Applicant extends AggregateRoot {
   public static readonly AGGREGATE_NAME = "applicant";
