@@ -1,11 +1,12 @@
-import { IQueryHandler } from "@nestjs/cqrs";
+import { IQueryHandler, QueryHandler } from "@ocoda/event-sourcing";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Member } from "../../../model/members/member.model";
 import { Repository } from "typeorm";
 import { GetMemberExpulsions } from "../../impl/member/get-member-expulsions.query";
 import { Expulsion } from "../../../model/members/expulsion.model";
 
-export class GetMemberExpulsionsHandler implements IQueryHandler<GetMemberExpulsions>{
+@QueryHandler(GetMemberExpulsions)
+export class GetMemberExpulsionsHandler implements IQueryHandler<GetMemberExpulsions,Expulsion[]>{
     constructor(@InjectRepository(Member) private readonly repository:Repository<Member>){}
     async execute(query: GetMemberExpulsions): Promise<Expulsion[]> {
         let member = query.idOrCard.match(/PLUG-\d{4}/) ?
