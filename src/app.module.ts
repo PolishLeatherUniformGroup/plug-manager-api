@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ManagementModule } from "./management/management.module";
+import { MailingModule } from './mailing/mailing.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ManagementModule } from "./management/management.module";
       logger: 'advanced-console',
       verboseRetryLog: true,
     }),
+    MailingModule,
   ],
   controllers: [],
   providers: [],
