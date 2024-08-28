@@ -15,9 +15,6 @@ import { EventSourcingModule, EventStore } from "@ocoda/event-sourcing";
           url: 'mongodb://localhost:27017',
         },
       },
-      snapshotStore:{
-        client: 'in-memory',
-      },
       events: [],
     }),
     TypeOrmModule.forRoot({

@@ -1,4 +1,4 @@
-import { ICommand } from "@nestjs/cqrs";
+import { ICommand } from "@ocoda/event-sourcing";
 import { Address } from "../../../domain/address.value-object";
 
 export class MemberCreate implements ICommand {

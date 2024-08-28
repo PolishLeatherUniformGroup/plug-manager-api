@@ -1,4 +1,4 @@
-import { ICommand } from "@nestjs/cqrs";
+import { ICommand } from "@ocoda/event-sourcing";
 
 export class MemberSuspendMembership implements ICommand {
   constructor(

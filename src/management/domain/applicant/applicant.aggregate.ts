@@ -19,11 +19,12 @@ import { ApplicantAppealOverDeadline } from "../../events/impl/applicant/applica
 import { ApplicantAppealAccepted } from "../../events/impl/applicant/applicant-appeal-accepted.event";
 import { ApplicantAppealRejected } from "../../events/impl/applicant/applicant-appeal-rejected.event";
 import { Aggregate, AggregateRoot } from "@ocoda/event-sourcing";
+import { ApplicantId } from "./applicant-id";
 
 @Aggregate({ streamName: "applicant" })
 export class Applicant extends AggregateRoot {
 
-  constructor(public readonly id: string) {
+  constructor(public readonly id: ApplicantId) {
     super();
   }
 
@@ -84,7 +85,7 @@ export class Applicant extends AggregateRoot {
   }
 
   public static create(
-    id: string,
+    id: ApplicantId,
     firstName: string,
     lastName: string,
     email: string,
@@ -99,7 +100,7 @@ export class Applicant extends AggregateRoot {
       (card) => new Recommendation(uuidv4(), card),
     );
     let appliedEvent = new ApplicantApplied(
-      id,
+      id.value,
       firstName,
       lastName,
       email,
@@ -117,13 +118,13 @@ export class Applicant extends AggregateRoot {
     this.mustBeInStatus(ApplicantStatus.New);
     if (valid) {
       let validEvent = new ApplicantRecommendationsValidatedPositive(
-        this.id,
+        this.id.value,
         ApplicantStatus.InRecommendation,
       );
       this.applyEvent(validEvent);
     } else {
       let invalidEvent = new ApplicantRecommendationsValidatedNegative(
-        this.id,
+        this.id.value,
         ApplicantStatus.Cancelled,
       );
       this.applyEvent(invalidEvent);
@@ -135,13 +136,13 @@ export class Applicant extends AggregateRoot {
     const recommendation = this.getRecommendation(idOrCard);
 
     let recommendationApproved = new ApplicantRecommendationApproved(
-      this.id,
+      this.id.value,
       recommendation.id,
     );
     this.applyEvent(recommendationApproved);
     if (this.isLastNotRecommended(recommendation.id)) {
       let paymentRequest = new ApplicantFeePaymentRequested(
-        this.id,
+        this.id.value,
         this.applicationFee.amount,
       );
       this.applyEvent(paymentRequest);
@@ -153,24 +154,24 @@ export class Applicant extends AggregateRoot {
     const recommendation = this.getRecommendation(idOrCard);
 
     let recommendationRejected = new ApplicantRecommendationRejected(
-      this.id,
+      this.id.value,
       recommendation.id,
     );
     this.applyEvent(recommendationRejected);
 
-    let cancelApplication = new ApplicantNotRecommended(this.id);
+    let cancelApplication = new ApplicantNotRecommended(this.id.value);
     this.applyEvent(cancelApplication);
   }
 
   public registerApplicationFeePayment(paidDate: Date) {
     this.mustBeInStatus(ApplicantStatus.AwaitPayment);
-    let feePaid = new ApplicantFeePaid(this.id, paidDate);
+    let feePaid = new ApplicantFeePaid(this.id.value, paidDate);
     this.applyEvent(feePaid);
   }
 
   public acceptApplication(acceptDate: Date) {
     this.mustBeInStatus(ApplicantStatus.AwaitDecision);
-    let accepted = new ApplicantApplicationAccepted(this.id, acceptDate);
+    let accepted = new ApplicantApplicationAccepted(this.id.value, acceptDate);
     this.applyEvent(accepted);
   }
 
@@ -181,7 +182,7 @@ export class Applicant extends AggregateRoot {
   ) {
     this.mustBeInStatus(ApplicantStatus.AwaitDecision);
     let rejected = new ApplicantApplicationRejected(
-      this.id,
+      this.id.value,
       rejectDate,
       justification,
       appealDeadline,
@@ -196,27 +197,27 @@ export class Applicant extends AggregateRoot {
     }
     if (this.isBeBeforeDeadline(appealDate)) {
       let appeal = new ApplicantAppealRejection(
-        this.id,
+        this.id.value,
         appealDate,
         justification,
       );
       this.applyEvent(appeal);
     } else {
-      let appealOverDeadline = new ApplicantAppealOverDeadline(this.id);
+      let appealOverDeadline = new ApplicantAppealOverDeadline(this.id.value);
       this.applyEvent(appealOverDeadline);
     }
   }
 
   public acceptAppeal(acceptDate: Date) {
     this.mustBeInStatus(ApplicantStatus.Appealed);
-    let accepted = new ApplicantAppealAccepted(this.id, acceptDate);
+    let accepted = new ApplicantAppealAccepted(this.id.value, acceptDate);
     this.applyEvent(accepted);
   }
 
   public rejectAppeal(rejectDate: Date, justification: string) {
     this.mustBeInStatus(ApplicantStatus.Appealed);
     let rejected = new ApplicantAppealRejected(
-      this.id,
+      this.id.value,
       rejectDate,
       justification,
     );

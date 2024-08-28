@@ -1,22 +1,20 @@
-import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
-import { StoreEventPublisher } from "event-sourcing-nestjs";
+import { CommandHandler, ICommandHandler } from "@ocoda/event-sourcing";
+
 import { MemberAggregateRepository } from "../../../domain/member/member.aggregate-repository";
 import { MemberSuspendMembership } from "../../impl/member/member-suspend-membership.command";
+import { MemberId } from "../../../domain/member/member-id";
 
 @CommandHandler(MemberSuspendMembership)
 export class MemberSuspendMembershipHandler
-  implements ICommandHandler<MemberSuspendMembership>
+  implements ICommandHandler
 {
   constructor(
     private readonly memberRepository: MemberAggregateRepository,
-    private readonly eventPublisher: StoreEventPublisher,
   ) {}
 
   async execute(command: MemberSuspendMembership) {
     try {
-      var member = this.eventPublisher.mergeObjectContext(
-        await this.memberRepository.getById(command.id),
-      );
+      const member = await this.memberRepository.getById(MemberId.from(command.id));
       member.suspendMember(
         command.suspendDate,
         command.suspendUntilDate,

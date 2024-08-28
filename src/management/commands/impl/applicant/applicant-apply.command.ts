@@ -1,4 +1,4 @@
-import { ICommand } from "@nestjs/cqrs";
+import { ICommand } from "@ocoda/event-sourcing";
 import { Address } from "../../../dto/address.dto";
 
 export class ApplicantApply implements ICommand {

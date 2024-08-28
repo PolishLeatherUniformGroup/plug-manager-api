@@ -1,24 +1,22 @@
-import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
+import { CommandHandler, ICommandHandler } from "@ocoda/event-sourcing";
 import { MemberAggregateRepository } from "../../../domain/member/member.aggregate-repository";
 import { MemberUpdateContactData } from "../../impl/member/member-update-contact-data.command";
-import { StoreEventPublisher } from "event-sourcing-nestjs";
+
 import { MapperService } from "../../../services/maper.service";
+import { MemberId } from "../../../domain/member/member-id";
 
 @CommandHandler(MemberUpdateContactData)
 export class MemberUpdateContactDataHandler
-  implements ICommandHandler<MemberUpdateContactData>
+  implements ICommandHandler
 {
   constructor(
     private readonly memberRepository: MemberAggregateRepository,
-    private readonly eventPublisher: StoreEventPublisher,
     private readonly mapperService: MapperService,
   ) {}
 
   async execute(command: MemberUpdateContactData) {
     try {
-      var member = this.eventPublisher.mergeObjectContext(
-        await this.memberRepository.getById(command.id),
-      );
+      const member = await this.memberRepository.getById(MemberId.from(command.id));
       member.updateContactData(
         command.email,
         command.phone,

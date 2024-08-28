@@ -1,22 +1,20 @@
-import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
-import { StoreEventPublisher } from "event-sourcing-nestjs";
+import { CommandHandler, ICommandHandler } from "@ocoda/event-sourcing";
+
 import { MemberAggregateRepository } from "../../../domain/member/member.aggregate-repository";
 import { MemberExpulsionAppeal } from "../../impl/member/member-expulsion-appeal.command";
+import { MemberId } from "../../../domain/member/member-id";
 
 @CommandHandler(MemberExpulsionAppeal)
 export class MemberExpulsionAppealHandler
-  implements ICommandHandler<MemberExpulsionAppeal>
+  implements ICommandHandler
 {
   constructor(
     private readonly memberRepository: MemberAggregateRepository,
-    private readonly eventPublisher: StoreEventPublisher,
   ) {}
 
   async execute(command: MemberExpulsionAppeal) {
     try {
-      var member = this.eventPublisher.mergeObjectContext(
-        await this.memberRepository.getById(command.id),
-      );
+      const member = await this.memberRepository.getById(MemberId.from(command.id));
       member.appealExpulsion(command.justification, command.appealDate);
       member.commit();
     } catch (e) {

@@ -1,23 +1,24 @@
-import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
+import { CommandHandler, ICommandHandler } from "@ocoda/event-sourcing";
 import { MemberCreate } from "../../impl/member/member-create.command";
 import { MemberAggregateRepository } from "../../../domain/member/member.aggregate-repository";
 import { v4 as uuidv4 } from "uuid";
-import { StoreEventPublisher } from "event-sourcing-nestjs";
+
 import { MapperService } from "../../../services/maper.service";
 import { Member } from "../../../domain/member/member.aggregate";
 import { MemberService } from "../../../services/member.service";
+import { MemberId } from "../../../domain/member/member-id";
 
 @CommandHandler(MemberCreate)
-export class MemberCreateHandler implements ICommandHandler<MemberCreate> {
+export class MemberCreateHandler implements ICommandHandler {
   constructor(
     private readonly membersRepository: MemberAggregateRepository,
-    private readonly publisher: StoreEventPublisher,
+   
     private readonly mapperService: MapperService,
     private readonly membersService: MemberService,
   ) {}
   async execute(command: MemberCreate): Promise<any> {
     try {
-      const id = uuidv4();
+      const id = MemberId.generate();
       const {
         firstName,
         lastName,
@@ -30,8 +31,7 @@ export class MemberCreateHandler implements ICommandHandler<MemberCreate> {
         paid,
       } = command;
       var card = await this.membersService.nextCard();
-      const applicant = this.publisher.mergeObjectContext(
-        Member.create(
+      const applicant =  Member.create(
           id,
           card,
           firstName,
@@ -43,8 +43,7 @@ export class MemberCreateHandler implements ICommandHandler<MemberCreate> {
           joinDate,
           paid,
           phone,
-        ),
-      );
+        );
 
       applicant.commit();
     } catch (error) {
