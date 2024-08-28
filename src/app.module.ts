@@ -2,6 +2,9 @@ import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ManagementModule } from "./management/management.module";
 import { MailingModule } from './mailing/mailing.module';
+import { CommunityModule } from './community/community.module';
+import { EventingModule } from './eventing/eventing.module';
+import { BlogModule } from './blog/blog.module';
 
 @Module({
   imports: [
@@ -21,6 +24,9 @@ import { MailingModule } from './mailing/mailing.module';
       verboseRetryLog: true,
     }),
     MailingModule,
+    CommunityModule,
+    EventingModule,
+    BlogModule,
   ],
   controllers: [],
   providers: [],
