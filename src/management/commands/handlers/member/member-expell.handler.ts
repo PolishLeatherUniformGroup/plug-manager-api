@@ -18,7 +18,7 @@ export class MemberExpellHandler implements ICommandHandler {
         command.expulsionReason,
         command.appealDeadline,
       );
-      member.commit();
+      await this.memberRepository.save(member);
     } catch (e) {
       console.error(e);
       throw e;

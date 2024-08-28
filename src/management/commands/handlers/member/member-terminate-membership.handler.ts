@@ -15,7 +15,7 @@ export class MemberTerminateMembershipHandler
     try {
       const member = await this.memberRepository.getById(MemberId.from(command.id));
       member.terminateMembership(command.terminateDate);
-      member.commit();
+      await this.memberRepository.save(member);
     } catch (e) {
       console.error(e);
       throw e;

@@ -16,7 +16,7 @@ export class MemberExpulsionAppealHandler
     try {
       const member = await this.memberRepository.getById(MemberId.from(command.id));
       member.appealExpulsion(command.justification, command.appealDate);
-      member.commit();
+      await this.memberRepository.save(member);
     } catch (e) {
       console.error(e);
       throw e;

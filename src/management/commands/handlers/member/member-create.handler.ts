@@ -11,8 +11,7 @@ import { MemberId } from "../../../domain/member/member-id";
 @CommandHandler(MemberCreate)
 export class MemberCreateHandler implements ICommandHandler {
   constructor(
-    private readonly membersRepository: MemberAggregateRepository,
-   
+    private readonly memberRepository: MemberAggregateRepository,   
     private readonly mapperService: MapperService,
     private readonly membersService: MemberService,
   ) {}
@@ -45,7 +44,7 @@ export class MemberCreateHandler implements ICommandHandler {
           phone,
         );
 
-      applicant.commit();
+      await this.memberRepository.save(applicant);
     } catch (error) {
       console.log(error);
       throw error;

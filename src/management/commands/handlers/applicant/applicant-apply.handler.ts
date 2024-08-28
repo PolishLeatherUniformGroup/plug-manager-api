@@ -1,23 +1,23 @@
 import { CommandHandler, ICommandHandler } from "@ocoda/event-sourcing";
 import { ApplicantApply } from "../../impl/applicant/applicant-apply.command";
-
-import { v4 as uuidv4 } from "uuid";
 import { Applicant } from "../../../domain/applicant/applicant.aggregate";
 import { MapperService } from "../../../services/maper.service";
 import { Logger } from "@nestjs/common";
+import { ApplicantId } from "../../../domain/applicant/applicant-id";
+import { ApplicantAggregateRepository } from "../../../domain/applicant/applicant.aggregate-repository";
 
 @CommandHandler(ApplicantApply)
 export class ApplicantApplyHandler implements ICommandHandler {
   private readonly logger = new Logger(ApplicantApplyHandler.name);
   constructor(
-   
+    private readonly applicantRepository: ApplicantAggregateRepository,
     private readonly mapperService: MapperService,
   ) { }
 
   async execute(command: ApplicantApply) {
     try {
       this.logger.log(`${ApplicantApplyHandler.name} command received command`);
-      const id = uuidv4();
+      const id = ApplicantId.generate();
       const {
         firstName,
         lastName,
@@ -40,7 +40,7 @@ export class ApplicantApplyHandler implements ICommandHandler {
           recommenderCards,
           phoneNumber,
         );
-      applicant.commit();
+      await this.applicantRepository.save(applicant);
     } catch (error) {
       this.logger.error(error);
       throw error;

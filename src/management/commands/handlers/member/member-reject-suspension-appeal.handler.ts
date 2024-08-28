@@ -17,7 +17,7 @@ export class MemberRejectSuspensionAppealHandler
     try {
       const member = await this.memberRepository.getById(MemberId.from(command.id));
       member.rejectSuspensionAppeal(command.rejectDate, command.justification);
-      member.commit();
+      await this.memberRepository.save(member);
     } catch (e) {
       console.error(e);
       throw e;

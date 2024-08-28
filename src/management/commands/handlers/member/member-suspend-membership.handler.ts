@@ -21,7 +21,7 @@ export class MemberSuspendMembershipHandler
         command.suspendReason,
         command.appealDeadline,
       );
-      member.commit();
+      await this.memberRepository.save(member);
     } catch (e) {
       console.error(e);
       throw e;

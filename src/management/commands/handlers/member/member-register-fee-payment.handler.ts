@@ -21,7 +21,7 @@ export class MemberRegisterFeePaymentHandler
         command.paymentAmount,
         command.paymentDate,
       );
-      member.commit();
+      await this.memberRepository.save(member);
     } catch (e) {
       console.error(e);
       throw e;

@@ -20,6 +20,7 @@ export class MemberRequestFeePaymentHandler
         command.dueAmount,
         command.dueDate,
       );
+      await this.memberRepository.save(member);
     } catch (e) {
       console.error(e);
       throw e;

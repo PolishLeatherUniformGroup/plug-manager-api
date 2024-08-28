@@ -3,6 +3,7 @@ import { ApplicantVerifyRecommendations } from "../../impl/applicant/applicant-v
 
 import { ApplicantAggregateRepository } from "../../../domain/applicant/applicant.aggregate-repository";
 import { MemberService } from "../../../services/member.service";
+import { ApplicantId } from "../../../domain/applicant/applicant-id";
 
 @CommandHandler(ApplicantVerifyRecommendations)
 export class ApplicantVerifyRecommendationsHandler
@@ -16,7 +17,7 @@ export class ApplicantVerifyRecommendationsHandler
 
   async execute(command: ApplicantVerifyRecommendations): Promise<any> {
     try {
-      const applicant = await this.applicantRepository.getById(command.id);
+      const applicant = await this.applicantRepository.getById(ApplicantId.from(command.id));
       var allValid =
         (await applicant.recommendations
           .map(async (recommendation) => {
@@ -24,7 +25,7 @@ export class ApplicantVerifyRecommendationsHandler
           })
           .filter(async (exists) => !exists).length) == 0;
       applicant.validateRecommendations(allValid);
-      applicant.commit();
+      await this.applicantRepository.save(applicant);
     } catch (e) {
       console.error(e);
       throw e;

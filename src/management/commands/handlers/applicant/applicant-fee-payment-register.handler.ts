@@ -15,7 +15,7 @@ export class ApplicantRegisterFeePaymentHandler
     try {
       const applicant = await this.applicantRepository.getById(command.id);
       applicant.registerApplicationFeePayment(command.paidDate);
-      applicant.commit();
+      await this.applicantRepository.save(applicant);
     } catch (error) {
       console.error(error);
       throw error;

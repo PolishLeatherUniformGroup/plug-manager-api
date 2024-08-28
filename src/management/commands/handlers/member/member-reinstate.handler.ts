@@ -16,7 +16,7 @@ export class MemberReinstateHandler
     try {
       const member = await this.memberRepository.getById(MemberId.from(command.id));
       member.reinstateMember(new Date());
-      member.commit();
+      await this.memberRepository.save(member);
     } catch (e) {
       console.error(e);
       throw e;

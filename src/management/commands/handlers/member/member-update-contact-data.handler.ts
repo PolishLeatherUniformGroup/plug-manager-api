@@ -22,7 +22,7 @@ export class MemberUpdateContactDataHandler
         command.phone,
         this.mapperService.mapToDomainObject(command.address),
       );
-      member.commit();
+      await this.memberRepository.save(member);
     } catch (e) {
       console.error(e);
       throw e;
