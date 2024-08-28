@@ -4,16 +4,25 @@
   PLUG API
 </h1>
 API  aplikacji członkowskiej Stowarzyszenia.
-## Moduły:
+
+## Moduły
 
 - ### Management
+  
   Zarządzanie członkostwem.
-- ### Mailing
-  Wysyłka emaili
-- ### Blog
-  Zarządzanie stroną startową
-- ### Community
-  Strefa członków.
-- ### Eventing
-  Wydarzenia wewnętrzne i zewnętrzne.
 
+- ### Mailing
+  
+  Wysyłka emaili
+
+- ### Blog
+  
+  Zarządzanie stroną startową
+
+- ### Community
+  
+  Strefa członków.
+
+- ### Eventing
+  
+  Wydarzenia wewnętrzne i zewnętrzne.
