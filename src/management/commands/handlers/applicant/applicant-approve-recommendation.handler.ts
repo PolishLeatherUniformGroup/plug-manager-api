@@ -16,7 +16,7 @@ export class ApplicantApproveRecommendationHandler
   ) {}
   async execute(command: ApplicantApproveRecommendation): Promise<any> {
     try {
-      this.logger.log(`${ApplicantApproveRecommendation.name} command received command ${JSON.stringify(command)}`);
+      this.logger.log(`${ApplicantApproveRecommendation.name} command received command`);
       const applicant = await this.applicantRepository.getById(ApplicantId.from(command.id));
       this.logger.log(`Applicant found ${applicant.id}`);
       applicant.approveRecommendation(command.recommenderIdOrCard);

@@ -48,8 +48,6 @@ export class ApplicantAppliedHandler implements IEventHandler {
       });
     });
 
-    console.log('applicant', applicant.recommendations);
-
     let status = new ApplicationStatus();
     status.status = ApplicantStatus.New;
     status.date = new Date();

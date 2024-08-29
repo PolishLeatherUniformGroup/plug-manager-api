@@ -19,10 +19,11 @@ import { ApplicantAppealAccepted } from "../../events/impl/applicant/applicant-a
 import { ApplicantAppealRejected } from "../../events/impl/applicant/applicant-appeal-rejected.event";
 import { Aggregate, AggregateRoot } from "@ocoda/event-sourcing";
 import { ApplicantId } from "./applicant-id";
+import { Logger } from "@nestjs/common";
 
 @Aggregate({ streamName: "applicant" })
 export class Applicant extends AggregateRoot {
-
+  private readonly logger = new Logger(Applicant.name);
   constructor(public readonly id: ApplicantId) {
     super();
   }
@@ -127,6 +128,7 @@ export class Applicant extends AggregateRoot {
   }
 
   public approveRecommendation(idOrCard: string) {
+    this.logger.log(`Approving recommendation ${idOrCard}`);
     this.mustBeInStatus(ApplicantStatus.InRecommendation);
     const recommendation = this.getRecommendation(idOrCard);
 
@@ -134,7 +136,7 @@ export class Applicant extends AggregateRoot {
       this.id.value,
       recommendation.cardNumber,
     );
-    this.applyEvent(recommendationApproved);    
+    this.applyEvent(recommendationApproved);
   }
 
   public rejectRecommendation(idOrCard: string) {
@@ -151,7 +153,7 @@ export class Applicant extends AggregateRoot {
     this.applyEvent(cancelApplication);
   }
 
-  public requestApplicationFeePayment(year:number, amount:number, dueDate:Date) {
+  public requestApplicationFeePayment(year: number, amount: number, dueDate: Date) {
     this.mustBeInStatus(ApplicantStatus.InRecommendation);
     let feeRequested = new ApplicantFeePaymentRequested(
       this.id.value,
@@ -224,6 +226,7 @@ export class Applicant extends AggregateRoot {
   }
 
   public onApplicantApplied(event: ApplicantApplied) {
+    this.logger.log(`Applying ${ApplicantApplied.name} event`);
     this._firstName = event.firstName;
     this._lastName = event.lastName;
     this._email = event.email;
@@ -235,20 +238,23 @@ export class Applicant extends AggregateRoot {
     this._status = ApplicantStatus.New;
   }
 
-  public onApplicantRecommendationsNotValid(
+  public onApplicantRecommendationsValidatedNegative(
     event: ApplicantRecommendationsValidatedNegative,
   ) {
+    this.logger.log(`Applying ${ApplicantRecommendationsValidatedNegative.name} event`);
     this._status = event.status;
-    this._recommendations.every((recommendation) => {
+    this._recommendations.forEach((recommendation) => {
       recommendation.markInvalid();
     });
   }
 
-  public onApplicantRecommendationsValid(event: ApplicantRecommendationsValidatedPositive) {
+  public onApplicantRecommendationsValidatedPositive(event: ApplicantRecommendationsValidatedPositive) {
+    this.logger.log(`Applying ${ApplicantRecommendationsValidatedPositive.name} event`);
     this._status = event.status;
-    this._recommendations.every((recommendation) => {
-      recommendation.markInvalid();
+    this._recommendations.forEach((recommendation) => {
+      recommendation.markValid();
     });
+    console.log("this._recommendations", this._recommendations);
   }
 
   public onApplicantRecommendationApproved(
@@ -328,7 +334,7 @@ export class Applicant extends AggregateRoot {
   }
 
   private mustBeInStatus(status: ApplicantStatus) {
-    if (this._status === status) {
+    if (this._status !== status) {
       throw new Error("Applicant has invalid status to perform operation");
     }
   }

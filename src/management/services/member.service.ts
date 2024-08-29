@@ -34,9 +34,7 @@ export class MemberService {
   async exists(cardNumber: string): Promise<boolean> {
     this.logger.log(`Checking if member exists ${cardNumber}`);
     const query:GetMember = this.mapperService.buildGetMemberQuery(cardNumber);
-    this.logger.log(`Query ${JSON.stringify(query)}`);
     const result = await this.queryBus.execute<GetMember, Member|null>(query);
-    this.logger.log(`Result ${JSON.stringify(result)}`);
     const exist = result !== null;
     this.logger.log(`Member ${cardNumber} exists: ${exist}`);
     return exist;

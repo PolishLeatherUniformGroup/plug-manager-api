@@ -26,7 +26,6 @@ export class ApplicantVerifyRecommendationsHandler
           this.logger.log(`Checking recommendation ${recommendation.cardNumber}`);
           validationResult.push(await this.mempberService.exists(recommendation.cardNumber));
         });
-      this.logger.log(`Validation result ${JSON.stringify(validationResult)}`);
       const allValid = validationResult.every((v) => v);
       this.logger.log(`All recommendations are ${allValid ? 'valid' : 'invalid'}`);
       applicant.validateRecommendations(allValid);

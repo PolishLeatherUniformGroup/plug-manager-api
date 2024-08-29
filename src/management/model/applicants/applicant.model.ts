@@ -41,6 +41,7 @@ export class Applicant {
     onDelete: "CASCADE",
   })
   public address: ApplicantAddress;*/
+  @Column(()=>Address)
   public address: Address;
 
   @OneToMany(
@@ -53,7 +54,10 @@ export class Applicant {
   )
   public recommendations: Recommendation[];
 
-  @OneToOne((type) => ApplicationFee, (applicationFee) => applicationFee.applicant, {})
+  @OneToOne((type) => ApplicationFee, (applicationFee) => applicationFee.applicant, {
+    cascade: true,
+    onDelete: "CASCADE",
+  })
   public applicationFee?: ApplicationFee;
 
   @OneToOne(
@@ -71,6 +75,9 @@ export class Applicant {
   })
   public applicationStatuses: ApplicationStatus[];
 
-  @OneToOne((type) => ApplicationProcess, (applicationProcess) => applicationProcess.applicant, {})
+  @OneToOne((type) => ApplicationProcess, (applicationProcess) => applicationProcess.applicant, {
+    cascade: true,
+    onDelete: "CASCADE",
+  })
   public applicationProcess: ApplicationProcess;
 }

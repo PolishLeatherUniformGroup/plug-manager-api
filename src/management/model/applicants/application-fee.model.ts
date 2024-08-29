@@ -5,11 +5,11 @@ import { Applicant } from "./applicant.model";
 export class ApplicationFee {
   @PrimaryColumn()
   public applicantId: string;
-  @Column()
+  @Column({nullable: true})
   public dueAmount?: number;
-  @Column()
+  @Column({nullable: true})
   public paidAmount?: number;
-  @Column()
+  @Column({nullable: true})
   public paidDate?: Date;
   @OneToOne(() => Applicant, (applicant) => applicant.applicationFee)
   @JoinColumn({ name: "applicantId" })

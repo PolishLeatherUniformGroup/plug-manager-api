@@ -14,7 +14,6 @@ export class GetAwaitingRecommendationsHandler implements IQueryHandler<GetAwait
         const applicants = await this.repository.find({
             relations: ['recommendations', 'applicationStatuses'],
         });
-        console.log('applicants', applicants);
         return applicants.filter((applicant) =>
             applicant.recommendations.some((recommendation) =>
                 recommendation.isRecommended !== true && (recommendation.cardNumber === query.cardOrId)));
