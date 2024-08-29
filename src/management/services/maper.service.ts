@@ -31,7 +31,6 @@ import { ApplicationStatus as ApplicationStatusDto } from "../dto/responses/appl
 import { ApplicantStatus } from "../domain/applicant/applicant-status.enum";
 import { GetApplicants } from "../queries/impl/applicant/get-applicants.query";
 import { MembershipFee } from "../dto/requests/membership-fee";
-import { MemberRequestFeePayment } from "../commands/impl/member/member-request-fee-payment.command";
 import { MembershipFeePayment } from "../dto/requests/membership-fee-payment";
 import { MemberRegisterFeePayment } from "../commands/impl/member/member-register-fee-payment.command";
 import { Suspension } from "../dto/requests/suspension.request";
@@ -60,6 +59,7 @@ import { GetMemberExpulsions } from "../queries/impl/member/get-member-expulsion
 import { SuspensionHistory } from "../dto/responses/suspension-history";
 import { Expulsion as ExpulsionModel } from '../model/members/expulsion.model';
 import { ExpulsionHistory } from '../dto/responses/expulsion-history';
+import { MemberRequestFeePayment } from "../commands/impl/member/member-request-fee-payment.command";
 
 @Injectable()
 export class MapperService {
@@ -246,7 +246,7 @@ export class MapperService {
   }
 
   public mapToMemberFeeRequested(idOrCard: string, body: MembershipFee): MemberRequestFeePayment {
-    return new MemberRequestFeePayment(idOrCard, body.year, body.dueAmount, body.dueDate);
+    return new MemberRequestFeePayment(idOrCard, body.year);
   }
 
   public mapToMemberFeePaymentRequested(idOrCard: string, year: number, body: MembershipFeePayment): MemberRegisterFeePayment {

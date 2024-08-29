@@ -23,7 +23,7 @@ export class ApplicantApplicationAcceptedHandler
     const event = envelope.payload;
     var applicant = await this.repository.findOne({
       where: { id: event.id },
-      relations: ["recommendations", "applicationProcess", "applicationStatuses", ],
+      relations: ["recommendations", "applicationProcess", "applicationStatuses", "applicationFee", "address"],
     });
     applicant.applicationProcess.acceptDate = event.acceptedDate;
 

@@ -24,8 +24,6 @@ export class MemberService {
 
   private readonly logger = new Logger(MemberService.name);
   constructor( 
-    @InjectRepository(MemberCard)
-    private readonly cards: Repository<MemberCard>,
     private readonly mapperService: MapperService,
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus
@@ -38,15 +36,6 @@ export class MemberService {
     const exist = result !== null;
     this.logger.log(`Member ${cardNumber} exists: ${exist}`);
     return exist;
-  }
-
-  async nextCard() {
-    var card = await this.cards.findOneBy({
-      id: "card",
-    });
-    card.last++;
-    await this.cards.save(card);
-    return `PLUG-${card.last.toString().padStart(4, "0")}`;
   }
 
   public async importMembers(body: Import) {

@@ -8,25 +8,25 @@ import { EventEnvelope, EventHandler, IEventHandler } from "@ocoda/event-sourcin
 
 @EventHandler(ApplicantAppealAccepted)
 export class ApplicantAppealAcceptedHandler
-  implements IEventHandler
-{
+  implements IEventHandler {
   constructor(
     @InjectRepository(Applicant)
     private readonly repository: Repository<Applicant>,
-  ) {}
+  ) { }
 
   async handle(envelope: EventEnvelope<ApplicantAppealAccepted>): Promise<void> {
     const event = envelope.payload;
     var applicant = await this.repository.findOne({
       where: { id: event.id },
-      relations: ["recommendations", "applicationProcess"],
+      relations: ["recommendations", "applicationProcess", "applicationStatuses"],
     });
     applicant.applicationProcess.appealAcceptDate = event.acceptedDate;
 
-    let status =new ApplicationStatus();
+    let status = new ApplicationStatus();
     status.status = ApplicantStatus.Accepted;
     status.date = new Date();
     status.applicant = applicant;
+    status.comment = "Odwołanie zaakceptowane";
     applicant.applicationStatuses.push(status);
 
     await this.repository.save(applicant);

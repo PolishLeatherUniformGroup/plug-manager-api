@@ -1,29 +1,20 @@
-import { CommandHandler, ICommandHandler } from "@ocoda/event-sourcing";
-
-import { MemberAggregateRepository } from "../../../domain/member/member.aggregate-repository";
-import { MemberRequestFeePayment } from "../../impl/member/member-request-fee-payment.command";
-import { MemberId } from "../../../domain/member/member-id";
+import { CommandHandler, ICommandHandler } from '@ocoda/event-sourcing';
+import { MemberRequestFeePayment } from '../../impl/member/member-request-fee-payment.command';
+import { MemberAggregateRepository } from '../../../domain/member/member.aggregate-repository';
+import { MemberId } from '../../../domain/member/member-id';
 
 @CommandHandler(MemberRequestFeePayment)
-export class MemberRequestFeePaymentHandler
-  implements ICommandHandler
-{
-  constructor(
-    private readonly memberRepository: MemberAggregateRepository,
-  ) {}
-
-  async execute(command: MemberRequestFeePayment) {
-    try {
-      const member = await this.memberRepository.getById(MemberId.from(command.id));
-      member.requestMembershipFeePayment(
-        command.year,
-        command.dueAmount,
-        command.dueDate,
-      );
-      await this.memberRepository.save(member);
-    } catch (e) {
-      console.error(e);
-      throw e;
+export class MemberRequestFeePaymentHandler implements ICommandHandler<MemberRequestFeePayment> {
+    constructor(private readonly memberRepository: MemberAggregateRepository) {
     }
-  }
+    async execute(command) {
+        try {
+            const member = await this.memberRepository.getById(MemberId.from(command.id));
+         
+        }
+        catch (e) {
+            console.error(e);
+            throw e;
+        }
+    }
 }

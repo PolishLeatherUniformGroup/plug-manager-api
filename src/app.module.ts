@@ -6,6 +6,7 @@ import { CommunityModule } from './community/community.module';
 import { EventingModule } from './eventing/eventing.module';
 import { BlogModule } from './blog/blog.module';
 import { StoreModule } from './store/store.module';
+import { SettingsController } from './management/controllers/settings.controller';
 
 @Module({
   imports: [
@@ -31,7 +32,6 @@ import { StoreModule } from './store/store.module';
     BlogModule,
     StoreModule,
   ],
-  controllers: [],
   providers: [],
 })
 export class AppModule { }

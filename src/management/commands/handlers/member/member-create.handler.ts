@@ -7,13 +7,15 @@ import { MapperService } from "../../../services/maper.service";
 import { Member } from "../../../domain/member/member.aggregate";
 import { MemberService } from "../../../services/member.service";
 import { MemberId } from "../../../domain/member/member-id";
+import { SettingsService } from "../../../services/settings.service";
 
 @CommandHandler(MemberCreate)
 export class MemberCreateHandler implements ICommandHandler {
   constructor(
     private readonly memberRepository: MemberAggregateRepository,
     private readonly mapperService: MapperService,
-    private readonly membersService: MemberService,
+    private readonly setttingsService: SettingsService,
+
   ) { }
   async execute(command: MemberCreate): Promise<any> {
     try {
@@ -29,7 +31,7 @@ export class MemberCreateHandler implements ICommandHandler {
         phone,
         paid,
       } = command;
-      var card = await this.membersService.nextCard();
+      var card = await this.setttingsService.getNextMemberCard();
       const applicant = Member.create(
         id,
         card,

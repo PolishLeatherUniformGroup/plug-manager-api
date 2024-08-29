@@ -8,29 +8,28 @@ import { EventHandler, IEventHandler, EventEnvelope } from "@ocoda/event-sourcin
 
 @EventHandler(ApplicantAppealOverDeadline)
 export class ApplicantAppealOverDeadlineHandler
-  implements IEventHandler
-{
+  implements IEventHandler {
   constructor(
     @InjectRepository(Applicant)
     private readonly repository: Repository<Applicant>,
-  ) {}
+  ) { }
 
   async handle(envelope: EventEnvelope<ApplicantAppealOverDeadline>): Promise<void> {
     const event = envelope.payload;
     var applicant = await this.repository.findOne({
       where: { id: event.id },
-      relations: ["recommendations", "applicationProcess"],
+      relations: ["recommendations", "applicationProcess", "applicationStatuses"],
     });
 
     applicant.applicationProcess.appealRejectDate =
       applicant.applicationProcess.appealDeadline;
 
-      let status =new ApplicationStatus();
-      status.status = ApplicantStatus.Accepted;
-      status.date = new Date();
-      status.applicant = applicant;
-      status.comment = "Odwołanie odrzucone z powodu przekroczenia terminu";
-      applicant.applicationStatuses.push(status);
+    let status = new ApplicationStatus();
+    status.status = ApplicantStatus.Accepted;
+    status.date = new Date();
+    status.applicant = applicant;
+    status.comment = "Odwołanie odrzucone z powodu przekroczenia terminu";
+    applicant.applicationStatuses.push(status);
     await this.repository.save(applicant);
   }
 }
