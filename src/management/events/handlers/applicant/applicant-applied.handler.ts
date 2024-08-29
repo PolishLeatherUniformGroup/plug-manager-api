@@ -43,11 +43,12 @@ export class ApplicantAppliedHandler implements IEventHandler {
 
     (event.recommendations as string[]).forEach((r: string) => {
       applicant.recommendations.push({
-        id: 0,
         cardNumber: r,
         applicant: applicant,
       });
     });
+
+    console.log('applicant', applicant.recommendations);
 
     let status = new ApplicationStatus();
     status.status = ApplicantStatus.New;

@@ -4,7 +4,7 @@ import { Applicant } from "./applicant.model";
 @Entity()
 export class Recommendation {
   @PrimaryGeneratedColumn({ type: 'bigint' })
-  public id: number;
+  public id?: number;
 
   @Column({ length: 10 })
   public cardNumber: string;

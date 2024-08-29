@@ -14,7 +14,6 @@ import { ApplicationStatus } from "../dto/responses/application-status";
 @Controller("applicants")
 @ApiTags("Management")
 export class ApplicantsController {
-
     constructor(private readonly applicantsService: ApplicantService) { }
 
     @Post()
@@ -27,7 +26,7 @@ export class ApplicantsController {
     @ApiAcceptedResponse()
     public async makeRecommendationDecision(
         @Param("id") id: string,
-        @Param("recommender") idOrCard: string,
+        @Param("idOrCard") idOrCard: string,
         @Body() decision: RecommendationDecision): Promise<void> {
         await this.applicantsService.recommend(id, idOrCard, decision);
     }

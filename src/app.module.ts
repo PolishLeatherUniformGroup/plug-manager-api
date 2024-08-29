@@ -23,6 +23,7 @@ import { StoreModule } from './store/store.module';
       synchronize: true,
       logger: 'advanced-console',
       verboseRetryLog: true,
+      dropSchema: true,
     }),
     MailingModule,
     CommunityModule,

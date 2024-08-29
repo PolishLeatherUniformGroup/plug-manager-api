@@ -111,7 +111,6 @@ export class Applicant extends AggregateRoot {
   }
 
   public validateRecommendations(valid: boolean) {
-    this.mustBeInStatus(ApplicantStatus.New);
     if (valid) {
       let validEvent = new ApplicantRecommendationsValidatedPositive(
         this.id.value,
@@ -135,14 +134,7 @@ export class Applicant extends AggregateRoot {
       this.id.value,
       recommendation.cardNumber,
     );
-    this.applyEvent(recommendationApproved);
-    if (this.isLastNotRecommended(recommendation.cardNumber)) {
-      let paymentRequest = new ApplicantFeePaymentRequested(
-        this.id.value,
-        this.applicationFee.amount,
-      );
-      this.applyEvent(paymentRequest);
-    }
+    this.applyEvent(recommendationApproved);    
   }
 
   public rejectRecommendation(idOrCard: string) {
@@ -302,17 +294,17 @@ export class Applicant extends AggregateRoot {
   }
 
   private getRecommendation(idOrCard: string): Recommendation {
-    const recommendations = this._recommendations.filter(
+    console.log("idOrCard", idOrCard);
+    console.log("this._recommendations", this._recommendations);
+    const recommendation = this._recommendations.find(
       (recommendation) =>
-        recommendation.cardNumber === idOrCard,
+        (recommendation.cardNumber === idOrCard)
     );
-    if (recommendations.length == 0) {
+    console.log("recommendation", recommendation);
+    if (!recommendation) {
       throw new Error("Recommendation not found");
     }
-    if (recommendations.length > 1) {
-      throw new Error("Multiple recommendations found");
-    }
-    return recommendations[0];
+    return recommendation;
   }
 
   private isLastNotRecommended(id: string): boolean {
@@ -324,7 +316,7 @@ export class Applicant extends AggregateRoot {
   }
 
   private mustBeInStatus(status: ApplicantStatus) {
-    if (this._status !== status) {
+    if (this._status === status) {
       throw new Error("Applicant has invalid status to perform operation");
     }
   }

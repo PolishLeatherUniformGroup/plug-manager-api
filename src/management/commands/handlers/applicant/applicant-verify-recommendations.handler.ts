@@ -20,12 +20,15 @@ export class ApplicantVerifyRecommendationsHandler
     try {
       this.logger.log(`${ApplicantVerifyRecommendations.name} command received command`);
       const applicant = await this.applicantRepository.getById(ApplicantId.from(command.id));
-      var allValid =
-        (await applicant.recommendations
-          .map(async (recommendation) => {
-            return await this.mempberService.exists(recommendation.cardNumber);
-          })
-          .filter(async (exists) => !exists).length) == 0;
+      let validationResult: boolean[] = [];
+      applicant.recommendations
+        .forEach(async (recommendation) => {
+          this.logger.log(`Checking recommendation ${recommendation.cardNumber}`);
+          validationResult.push(await this.mempberService.exists(recommendation.cardNumber));
+        });
+      this.logger.log(`Validation result ${JSON.stringify(validationResult)}`);
+      const allValid = validationResult.every((v) => v);
+      this.logger.log(`All recommendations are ${allValid ? 'valid' : 'invalid'}`);
       applicant.validateRecommendations(allValid);
       await this.applicantRepository.save(applicant);
     } catch (e) {

@@ -1,11 +1,11 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { Repository } from "typeorm";
 import { Member } from "../model/members/member.model";
 import { MemberCard } from "../model/members/card.model";
 import { InjectRepository } from "@nestjs/typeorm";
 import { MembershipFee } from "../dto/requests/membership-fee";
 import { MapperService } from "./maper.service";
-import { CommandBus, QueryBus } from "@ocoda/event-sourcing";
+import { CommandBus, getQueryMetadata, QueryBus } from "@ocoda/event-sourcing";
 import { MembershipFeePayment } from "../dto/requests/membership-fee-payment";
 import { Suspension } from "../dto/requests/suspension.request";
 import { Appeal } from "../dto/requests/appeal.request";
@@ -17,14 +17,13 @@ import { MemberStatus } from "../domain/member/member-status.enum";
 import { YearlyFee } from "../dto/responses/yearly-fee";
 import { Import } from "../dto/requests/import";
 import { MemberImport } from "../commands/impl/member/member-import.command";
+import { GetMember } from "../queries/impl/member/get-member.query";
 
 @Injectable()
 export class MemberService {
 
-
-  constructor(
-    @InjectRepository(Member)
-    private readonly repository: Repository<Member>,
+  private readonly logger = new Logger(MemberService.name);
+  constructor( 
     @InjectRepository(MemberCard)
     private readonly cards: Repository<MemberCard>,
     private readonly mapperService: MapperService,
@@ -33,9 +32,14 @@ export class MemberService {
   ) { }
 
   async exists(cardNumber: string): Promise<boolean> {
-    return await this.repository.existsBy({
-      cardNumber: cardNumber,
-    });
+    this.logger.log(`Checking if member exists ${cardNumber}`);
+    const query:GetMember = this.mapperService.buildGetMemberQuery(cardNumber);
+    this.logger.log(`Query ${JSON.stringify(query)}`);
+    const result = await this.queryBus.execute<GetMember, Member|null>(query);
+    this.logger.log(`Result ${JSON.stringify(result)}`);
+    const exist = result !== null;
+    this.logger.log(`Member ${cardNumber} exists: ${exist}`);
+    return exist;
   }
 
   async nextCard() {

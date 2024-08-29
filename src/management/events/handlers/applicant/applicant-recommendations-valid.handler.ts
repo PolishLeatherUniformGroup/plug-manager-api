@@ -14,7 +14,7 @@ export class ApplicantRecommendationsValidHandler
     const event = envelope.payload;
     var applicant = await this.repository.findOne({
       where: { id: event.id },
-      relations: ["recommendations"],
+      relations: ["recommendations", "applicationStatuses"],
     });
     let status =new ApplicationStatus();
     status.status = event.status;

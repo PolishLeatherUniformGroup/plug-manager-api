@@ -80,6 +80,7 @@ export class ApplicantService {
 
   public async recommend(applicantId: string, recommender: string, request: RecommendationDecision): Promise<void> {
     try {
+      this.logger.log(`Recommending applicant ${applicantId} by ${recommender}`);
       let command = this.mapper.mapToRecommendationCommand(applicantId, recommender, request);
       await this.commandBus.execute(command);
     } catch (e) {
