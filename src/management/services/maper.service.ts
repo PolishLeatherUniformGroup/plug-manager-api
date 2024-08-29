@@ -30,7 +30,7 @@ import { ApplicationStatus } from "../model/applicants/application-status.model"
 import { ApplicationStatus as ApplicationStatusDto } from "../dto/responses/application-status";
 import { ApplicantStatus } from "../domain/applicant/applicant-status.enum";
 import { GetApplicants } from "../queries/impl/applicant/get-applicants.query";
-import { MembershipFee } from "../dto/requests/membership-fee";
+import { OverrideFee } from "../dto/requests/overrride-fee";
 import { MembershipFeePayment } from "../dto/requests/membership-fee-payment";
 import { MemberRegisterFeePayment } from "../commands/impl/member/member-register-fee-payment.command";
 import { Suspension } from "../dto/requests/suspension.request";
@@ -60,6 +60,8 @@ import { SuspensionHistory } from "../dto/responses/suspension-history";
 import { Expulsion as ExpulsionModel } from '../model/members/expulsion.model';
 import { ExpulsionHistory } from '../dto/responses/expulsion-history';
 import { MemberRequestFeePayment } from "../commands/impl/member/member-request-fee-payment.command";
+import { MembershipFee } from "../dto/requests/membership-fee";
+import { MemberOverrideRequestFeePayment } from "../commands/impl/member/member-override-request-fee-payment.command";
 
 @Injectable()
 export class MapperService {
@@ -247,6 +249,10 @@ export class MapperService {
 
   public mapToMemberFeeRequested(idOrCard: string, body: MembershipFee): MemberRequestFeePayment {
     return new MemberRequestFeePayment(idOrCard, body.year);
+  }
+
+  public mapToOverrideFeeRequested(idOrCard: string, body: OverrideFee): MemberOverrideRequestFeePayment {
+    return new MemberOverrideRequestFeePayment(idOrCard, body.year, body.dueAmount, body.dueDate);
   }
 
   public mapToMemberFeePaymentRequested(idOrCard: string, year: number, body: MembershipFeePayment): MemberRegisterFeePayment {

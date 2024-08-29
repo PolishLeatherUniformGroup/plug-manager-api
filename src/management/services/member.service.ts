@@ -3,7 +3,7 @@ import { Repository } from "typeorm";
 import { Member } from "../model/members/member.model";
 import { MemberCard } from "../model/members/card.model";
 import { InjectRepository } from "@nestjs/typeorm";
-import { MembershipFee } from "../dto/requests/membership-fee";
+import { OverrideFee } from "../dto/requests/overrride-fee";
 import { MapperService } from "./maper.service";
 import { CommandBus, getQueryMetadata, QueryBus } from "@ocoda/event-sourcing";
 import { MembershipFeePayment } from "../dto/requests/membership-fee-payment";
@@ -18,12 +18,13 @@ import { YearlyFee } from "../dto/responses/yearly-fee";
 import { Import } from "../dto/requests/import";
 import { MemberImport } from "../commands/impl/member/member-import.command";
 import { GetMember } from "../queries/impl/member/get-member.query";
+import { MembershipFee } from "../dto/requests/membership-fee";
 
 @Injectable()
 export class MemberService {
 
   private readonly logger = new Logger(MemberService.name);
-  constructor( 
+  constructor(
     private readonly mapperService: MapperService,
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus
@@ -31,8 +32,8 @@ export class MemberService {
 
   async exists(cardNumber: string): Promise<boolean> {
     this.logger.log(`Checking if member exists ${cardNumber}`);
-    const query:GetMember = this.mapperService.buildGetMemberQuery(cardNumber);
-    const result = await this.queryBus.execute<GetMember, Member|null>(query);
+    const query: GetMember = this.mapperService.buildGetMemberQuery(cardNumber);
+    const result = await this.queryBus.execute<GetMember, Member | null>(query);
     const exist = result !== null;
     this.logger.log(`Member ${cardNumber} exists: ${exist}`);
     return exist;
@@ -45,6 +46,11 @@ export class MemberService {
 
   public async requestFee(idOrCard: string, body: MembershipFee): Promise<void> {
     let command = this.mapperService.mapToMemberFeeRequested(idOrCard, body);
+    await this.commandBus.execute(command);
+  }
+
+  public async overrideFee(idOrCard: string, body: OverrideFee): Promise<void> {
+    let command = this.mapperService.mapToOverrideFeeRequested(idOrCard, body);
     await this.commandBus.execute(command);
   }
 

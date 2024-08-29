@@ -1,10 +1,4 @@
-import { ApiProperty } from "@nestjs/swagger";
-
-export class MembershipFee {
-    @ApiProperty()
-    public year: number;
-    @ApiProperty()
-    public dueAmount: number;
-    @ApiProperty()
-    public dueDate: Date;
+import { OmitType } from '@nestjs/swagger';
+import { OverrideFee } from './overrride-fee';
+export class MembershipFee extends OmitType(OverrideFee, ['dueAmount', 'dueDate']) {
 }
