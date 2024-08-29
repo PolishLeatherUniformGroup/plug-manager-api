@@ -4,7 +4,7 @@ import { ManagementModule } from "./management/management.module";
 import { MailingModule } from './mailing/mailing.module';
 import { CommunityModule } from './community/community.module';
 import { EventingModule } from './eventing/eventing.module';
-import { BlogModule } from './blog/blog.module';
+import { BlogModule } from './crm/crm.module';
 
 @Module({
   imports: [
