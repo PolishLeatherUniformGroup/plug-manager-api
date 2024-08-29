@@ -3,6 +3,7 @@ import { Repository } from "typeorm";
 import { Applicant } from "../../../model/applicants/applicant.model";
 import { ApplicantFeePaymentRequested } from "../../impl/applicant/applicant-fee-payment-requested.event";
 import { InjectRepository } from "@nestjs/typeorm";
+import { ApplicationFee } from "../../../model/applicants/application-fee.model";
 
 @EventHandler(ApplicantFeePaymentRequested)
 export class ApplicantFeePaymentRequestedHandler
@@ -17,10 +18,11 @@ export class ApplicantFeePaymentRequestedHandler
     const event = envelope.payload;
     var applicant = await this.repository.findOne({
       where: { id: event.id },
-      relations: ["recommendations"],
+      relations: ["recommendations", "applicationFee"],
     });
+    applicant.applicationFee = new ApplicationFee();
     applicant.applicationFee.dueAmount = event.amount;
-
+  
     await this.repository.save(applicant);
   }
 }

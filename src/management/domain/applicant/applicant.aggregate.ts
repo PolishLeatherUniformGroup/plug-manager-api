@@ -151,6 +151,17 @@ export class Applicant extends AggregateRoot {
     this.applyEvent(cancelApplication);
   }
 
+  public requestApplicationFeePayment(year:number, amount:number, dueDate:Date) {
+    this.mustBeInStatus(ApplicantStatus.InRecommendation);
+    let feeRequested = new ApplicantFeePaymentRequested(
+      this.id.value,
+      year,
+      amount,
+      dueDate,
+    );
+    this.applyEvent(feeRequested);
+  }
+
   public registerApplicationFeePayment(paidDate: Date) {
     this.mustBeInStatus(ApplicantStatus.AwaitPayment);
     let feePaid = new ApplicantFeePaid(this.id.value, paidDate);
@@ -257,6 +268,7 @@ export class Applicant extends AggregateRoot {
 
   public onApplicantFeePaymentRequested(event: ApplicantFeePaymentRequested) {
     this._status = ApplicantStatus.AwaitPayment;
+    this._applicationFee = new ApplicationFee(event.amount);
   }
 
   public onApplicantNotRecommended(event: ApplicantNotRecommended) {
