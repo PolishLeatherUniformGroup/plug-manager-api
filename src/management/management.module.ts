@@ -13,14 +13,19 @@ import { ApplicantAddress } from "./model/applicants/address.model";
 import { Recommendation } from "./model/applicants/recommendation.model";
 import { ApplicationProcess } from "./model/applicants/application-process.model";
 import { ApplicationStatus } from "./model/applicants/application-status.model";
-import { Identifier } from "./model/settings/identifiers";
+import { Identifier } from "./model/settings/identifiers.model";
 import { ApplicationFee } from "./model/applicants/application-fee.model";
-import { Fee } from "./model/settings/fee";
+import { Fee } from "./model/settings/fee.model";
 import { SettingsController } from "./controllers/settings.controller";
+import { MembershipFee } from "./model/members/membership-fee.model";
+import { Suspension } from "./model/members/suspension.model";
+import { Expulsion } from "./model/members/expulsion.model";
 
 @Module({
   imports: [TypeOrmModule.forFeature([
     Member, Applicant, // main entities
+    Recommendation, ApplicationFee, ApplicationProcess, ApplicationStatus,// applicant sub entities
+    MembershipFee, Suspension, Expulsion, // member sub entities
     Identifier, Fee, // settings
   ]),
   EventSourcingModule.forRoot({

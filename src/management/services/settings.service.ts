@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { Identifier } from "../model/settings/identifiers";
-import { Fee } from "../model/settings/fee";
+import { Identifier } from "../model/settings/identifiers.model";
+import { Fee } from "../model/settings/fee.model";
 
 @Injectable()
 export class SettingsService {
