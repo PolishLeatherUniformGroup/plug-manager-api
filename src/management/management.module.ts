@@ -9,7 +9,6 @@ import { Applicant } from "./model/applicants/applicant.model";
 import { MemberDomain } from "./domain/member";
 import { EventSourcingModule, EventStore } from "@ocoda/event-sourcing";
 import { Events } from "./events";
-import { ApplicantAddress } from "./model/applicants/address.model";
 import { Recommendation } from "./model/applicants/recommendation.model";
 import { ApplicationProcess } from "./model/applicants/application-process.model";
 import { ApplicationStatus } from "./model/applicants/application-status.model";

@@ -4,8 +4,7 @@ import { Recommendation } from "./recommendation.model";
 import { ApplicationFee } from "./application-fee.model";
 import { ApplicationProcess } from "./application-process.model";
 import { ApplicationStatus } from "./application-status.model";
-import { App } from "supertest/types";
-import { ApplicantAddress } from "./address.model";
+
 
 @Entity()
 export class Applicant {
@@ -35,13 +34,7 @@ export class Applicant {
     return this.applicationStatuses[this.applicationStatuses.length - 1].status;
   }
 
-  /*
-  @OneToOne((type) => ApplicantAddress, (applicantAddress) => applicantAddress.applicant, {
-    cascade: true,
-    onDelete: "CASCADE",
-  })
-  public address: ApplicantAddress;*/
-  @Column(()=>Address)
+  @Column(() => Address)
   public address: Address;
 
   @OneToMany(
