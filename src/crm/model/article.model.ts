@@ -7,29 +7,29 @@ import { Image } from "./image.model";
 
 @Entity()
 export class Article {
-    @PrimaryGeneratedColumn({type: 'bigint'})
+    @PrimaryGeneratedColumn({ type: 'bigint' })
     id: number;
 
-    @Column({type: 'varchar', length: 64})
+    @Column({ type: 'varchar', length: 64 })
     @Unique(["slug"])
     slug: string;
 
-    @Column({type: 'varchar', length: 255})
+    @Column({ type: 'varchar', length: 255 })
     title: string;
 
-    @Column({type: 'bit', default: 0})
+    @Column({ type: 'bit', default: false })
     isPublished: boolean;
-    @Column({type: 'bit', default: 0})
+    @Column({ type: 'bit', default: false })
     showInMenu: boolean;
-    @Column({type: 'bit', default: 0})
+    @Column({ type: 'bit', default: false })
     isDefault: boolean;
-    @Column({type: 'int', default: 0})
+    @Column({ type: 'int', default: false })
     order: number;
 
-    @Column({type: 'text', nullable: true})
+    @Column({ type: 'text', nullable: true })
     content: string;
 
-    @Column({type: 'varchar', length:255, nullable: true})
+    @Column({ type: 'varchar', length: 255, nullable: true })
     headerImage?: string;
 
     @Column(() => Updates)
