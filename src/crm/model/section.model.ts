@@ -7,7 +7,7 @@ import { Language } from "./language.model";
 @Entity()
 export class Section {
 
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn({type: 'bigint'})
     id: number;
 
     @Column({type: 'varchar', length: 64})

@@ -3,11 +3,11 @@ import { Section } from "./section.model";
 import { Metadata } from "./metadata.model";
 import { Updates } from "./updates.model";
 import { Language } from "./language.model";
-import { ArticleImage } from "./article-image.model";
+import { Image } from "./image.model";
 
 @Entity()
 export class Article {
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn({type: 'bigint'})
     id: number;
 
     @Column({type: 'varchar', length: 64})
@@ -31,9 +31,6 @@ export class Article {
 
     @Column({type: 'varchar', length:255, nullable: true})
     headerImage?: string;
-
-    @OneToMany(() => ArticleImage, articleImage => articleImage.article)
-    images: ArticleImage[];
 
     @Column(() => Updates)
     updates: Updates;
