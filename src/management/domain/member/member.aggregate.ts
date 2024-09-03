@@ -300,8 +300,13 @@ export class Member extends AggregateRoot {
   public onMemberMembershipFeePaymentRequested(
     event: MemberMembershipFeePaymentRequested,
   ): void {
-    var fee = new MembershipFee(event.year, event.amount, new Date());
-    this._membershipFees.push(fee);
+    const exist = this._membershipFees.find((fee) => fee.year === event.year);
+    if (!exist) {
+      var fee = new MembershipFee(event.year, event.amount, new Date());
+      this._membershipFees.push(fee);
+    } else {
+      exist.dueAmount = event.amount;
+    }
   }
 
   public onMemberMembershipFeePaid(event: MemberMembershipFeePaid): void {

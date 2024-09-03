@@ -1,4 +1,4 @@
-import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
+import { IQueryHandler, QueryHandler } from '@ocoda/event-sourcing';
 import { GetMembers } from '../../impl/member/get-members.query';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Member } from '../../../model/members/member.model';

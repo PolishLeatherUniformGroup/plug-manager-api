@@ -1,0 +1,20 @@
+{
+    "firstName": "Nowy",
+    "lastName": "Kandydat",
+    "email": "nowy@plug.org.pl",
+    "phoneNumber": "123456789",
+    "address": {
+      "country": "Polska",
+      "city": "Warszawa",
+      "street": "Złota",
+      "postalCode": "01-030",
+      "house": "25",
+      "apartment": "13",
+      "region": "n/a"
+    },
+    "recommenders": [
+      "PLUG-9001","PLUG-9002"
+    ],
+    "applyDate": "2024-08-29T10:17:42.915Z",
+    "birthDate": "2024-08-29T10:17:42.915Z"
+  }

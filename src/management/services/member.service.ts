@@ -1,11 +1,11 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { Repository } from "typeorm";
 import { Member } from "../model/members/member.model";
 import { MemberCard } from "../model/members/card.model";
 import { InjectRepository } from "@nestjs/typeorm";
-import { MembershipFee } from "../dto/requests/membership-fee";
+import { OverrideFee } from "../dto/requests/overrride-fee";
 import { MapperService } from "./maper.service";
-import { CommandBus, QueryBus } from "@ocoda/event-sourcing";
+import { CommandBus, getQueryMetadata, QueryBus } from "@ocoda/event-sourcing";
 import { MembershipFeePayment } from "../dto/requests/membership-fee-payment";
 import { Suspension } from "../dto/requests/suspension.request";
 import { Appeal } from "../dto/requests/appeal.request";
@@ -17,34 +17,26 @@ import { MemberStatus } from "../domain/member/member-status.enum";
 import { YearlyFee } from "../dto/responses/yearly-fee";
 import { Import } from "../dto/requests/import";
 import { MemberImport } from "../commands/impl/member/member-import.command";
+import { GetMember } from "../queries/impl/member/get-member.query";
+import { MembershipFee } from "../dto/requests/membership-fee";
 
 @Injectable()
 export class MemberService {
 
-
+  private readonly logger = new Logger(MemberService.name);
   constructor(
-    @InjectRepository(Member)
-    private readonly repository: Repository<Member>,
-    @InjectRepository(MemberCard)
-    private readonly cards: Repository<MemberCard>,
     private readonly mapperService: MapperService,
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus
   ) { }
 
   async exists(cardNumber: string): Promise<boolean> {
-    return await this.repository.existsBy({
-      cardNumber: cardNumber,
-    });
-  }
-
-  async nextCard() {
-    var card = await this.cards.findOneBy({
-      id: "card",
-    });
-    card.last++;
-    await this.cards.save(card);
-    return `PLUG-${card.last.toString().padStart(4, "0")}`;
+    this.logger.log(`Checking if member exists ${cardNumber}`);
+    const query: GetMember = this.mapperService.buildGetMemberQuery(cardNumber);
+    const result = await this.queryBus.execute<GetMember, Member | null>(query);
+    const exist = result !== null;
+    this.logger.log(`Member ${cardNumber} exists: ${exist}`);
+    return exist;
   }
 
   public async importMembers(body: Import) {
@@ -54,6 +46,11 @@ export class MemberService {
 
   public async requestFee(idOrCard: string, body: MembershipFee): Promise<void> {
     let command = this.mapperService.mapToMemberFeeRequested(idOrCard, body);
+    await this.commandBus.execute(command);
+  }
+
+  public async overrideFee(idOrCard: string, body: OverrideFee): Promise<void> {
+    let command = this.mapperService.mapToOverrideFeeRequested(idOrCard, body);
     await this.commandBus.execute(command);
   }
 

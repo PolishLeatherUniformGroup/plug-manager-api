@@ -19,7 +19,7 @@ export class ApplicantApplicationRejectedHandler
     const event = envelope.payload;
     var applicant = await this.repository.findOne({
       where: { id: event.id },
-      relations: ["recommendations", "applicationProcess"],
+      relations: ["recommendations", "applicationProcess", "applicationStatuses"],
     });
     applicant.applicationProcess.rejectDate = event.rejectDate;
     applicant.applicationProcess.rejectionJsutification = event.justification;

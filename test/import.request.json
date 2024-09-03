@@ -1,0 +1,21 @@
+{
+    "members": [
+      {
+        "cardNumber": "PLUG-9001",
+        "firstName": "TestA",
+        "lastName": "TestA",
+        "email": "test.a@plug.org.pl",
+        "birthDate": "2024-08-29T10:16:07.259Z",
+        "joinDate": "2024-08-29T10:16:07.259Z",
+        "phone": "123456789"
+      }, {
+        "cardNumber": "PLUG-9002",
+        "firstName": "TestB",
+        "lastName": "TestB",
+        "email": "test.b@plug.org.pl",
+        "birthDate": "2024-08-29T10:16:07.259Z",
+        "joinDate": "2024-08-29T10:16:07.259Z",
+        "phone": "123456789"
+      }
+    ]
+  }

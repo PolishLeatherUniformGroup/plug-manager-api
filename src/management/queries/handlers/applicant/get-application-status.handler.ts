@@ -1,4 +1,4 @@
-import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
+import { IQueryHandler, QueryHandler } from '@ocoda/event-sourcing';
 import { GetApplicationStatus } from '../../impl/applicant/get-application-status.query';
 import { ApplicationStatus } from '../../../model/applicants/application-status.model';
 import { InjectRepository } from '@nestjs/typeorm';

@@ -9,31 +9,31 @@ export class ApplicationProcess {
   @Column()
   public applyDate: Date;
 
-  @Column()
+  @Column({nullable: true})
   public acceptDate?: Date;
 
-  @Column()
+  @Column({nullable: true})
   public rejectDate?: Date;
 
-  @Column()
+  @Column({nullable: true})
   public rejectionJsutification?: string;
 
-  @Column()
+  @Column({nullable: true})
   public appealDeadline?: Date;
 
-  @Column()
+  @Column({nullable: true})
   public appealDate?: Date;
 
-  @Column()
+  @Column({nullable: true})
   public appealJustification?: string;
 
-  @Column()
+  @Column({nullable: true})
   public appealDecisionJsutification?: string;
 
-  @Column()
+  @Column({nullable: true})
   public appealAcceptDate?: Date;
 
-  @Column()
+  @Column({nullable: true})
   public appealRejectDate?: Date;
 
   @OneToOne(() => Applicant, (applicant) => applicant.applicationProcess)

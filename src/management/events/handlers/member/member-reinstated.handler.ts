@@ -5,8 +5,6 @@ import { MemberStatus } from "../../../domain/member/member-status.enum";
 import { MemberResinstated } from "../../impl/member/member-reinstated.events";
 import { InjectRepository } from "@nestjs/typeorm";
 import { MemberRequestFeePayment } from "../../../commands/impl/member/member-request-fee-payment.command";
-import { SettingsService } from "../../../services/settings.service";
-import { get } from "http";
 
 @EventHandler(MemberResinstated)
 export class MemberResinstatedHandler
@@ -15,7 +13,6 @@ export class MemberResinstatedHandler
     @InjectRepository(Member)
     private readonly repository: Repository<Member>,
     private readonly commandBus: CommandBus,
-    private readonly settingsService:SettingsService,
   ) { }
 
   public async handle(envelope: EventEnvelope<MemberResinstated>): Promise<void> {
@@ -35,14 +32,8 @@ export class MemberResinstatedHandler
     const thisYear = new Date().getFullYear();
     const dueDate = new Date();
     if (member.membershipFees.find((fee) => fee.year === thisYear) === undefined) {
-      var fee = await this.settingsService.getYearlyFee(thisYear);
-      var command = new MemberRequestFeePayment(event.id, thisYear, fee, this.getDueDate());
+      var command = new MemberRequestFeePayment(event.id, thisYear);
+      await this.commandBus.execute<MemberRequestFeePayment>(command);
     }
-  }
-
-  private getDueDate(): Date {
-    let result = new Date();
-    result.setDate(result.getDate() + 14);
-    return result;
   }
 }

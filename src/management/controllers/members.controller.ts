@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, Put, Query } from "@nestjs/common";
 import { ApiAcceptedResponse, ApiCreatedResponse, ApiOkResponse, ApiQuery, ApiTags } from "@nestjs/swagger";
 import { ContactData } from '../dto/requests/contact-data.request';
-import { MembershipFee } from "../dto/requests/membership-fee";
+import { OverrideFee } from "../dto/requests/overrride-fee";
 import { MembershipFeePayment } from "../dto/requests/membership-fee-payment";
 import { MemberStatus } from "../domain/member/member-status.enum";
 import { Suspension } from "../dto/requests/suspension.request";
@@ -19,17 +19,23 @@ import { Import } from "../dto/requests/import";
 @ApiTags("Management")
 export class MembersController {
 
-    constructor(private readonly memberService:MemberService) { }
+    constructor(private readonly memberService: MemberService) { }
 
     @Put()
     public async importMembers(@Body() body: Import): Promise<void> {
         await this.memberService.importMembers(body);
     }
-    
+
     @Post(":idOrCard/membership-fees")
     @ApiCreatedResponse()
-    public async requestFee(@Param("idOrCard") idOrCard: string, @Body() body: MembershipFee): Promise<void> {
+    public async requestFee(@Param("idOrCard") idOrCard: string, @Body() body: OverrideFee): Promise<void> {
         await this.memberService.requestFee(idOrCard, body);
+    }
+
+    @Post(":idOrCard/membership-fees/:year")
+    @ApiCreatedResponse()
+    public async overrideFee(@Param("idOrCard") idOrCard: string, @Body() body: OverrideFee): Promise<void> {
+        await this.memberService.overrideFee(idOrCard, body);
     }
 
     @Put(":idOrCard/membership-fees/:year/payment")
@@ -47,7 +53,7 @@ export class MembersController {
     @Put(":idOrCard/suspensions/latest/appeal")
     @ApiAcceptedResponse()
     public async appealSuspension(@Param("idOrCard") idOrCard: string, @Body() body: Appeal): Promise<void> {
-       await this.memberService.appealSuspension(idOrCard, body);
+        await this.memberService.appealSuspension(idOrCard, body);
     }
 
     @Put(":idOrCard/suspensions/latest/appeal/decision")
@@ -83,7 +89,7 @@ export class MembersController {
     @Get(":idOrCard")
     @ApiOkResponse({ type: MemberDto, isArray: false })
     public async getMember(@Param("idOrCard") idOrCard: string): Promise<MemberDto | null> {
-       return await this.memberService.getMember(idOrCard);
+        return await this.memberService.getMember(idOrCard);
     }
 
     @Get()

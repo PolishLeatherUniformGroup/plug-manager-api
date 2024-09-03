@@ -19,10 +19,11 @@ import { ApplicantAppealAccepted } from "../../events/impl/applicant/applicant-a
 import { ApplicantAppealRejected } from "../../events/impl/applicant/applicant-appeal-rejected.event";
 import { Aggregate, AggregateRoot } from "@ocoda/event-sourcing";
 import { ApplicantId } from "./applicant-id";
+import { Logger } from "@nestjs/common";
 
 @Aggregate({ streamName: "applicant" })
 export class Applicant extends AggregateRoot {
-
+  private readonly logger = new Logger(Applicant.name);
   constructor(public readonly id: ApplicantId) {
     super();
   }
@@ -111,7 +112,6 @@ export class Applicant extends AggregateRoot {
   }
 
   public validateRecommendations(valid: boolean) {
-    this.mustBeInStatus(ApplicantStatus.New);
     if (valid) {
       let validEvent = new ApplicantRecommendationsValidatedPositive(
         this.id.value,
@@ -128,6 +128,7 @@ export class Applicant extends AggregateRoot {
   }
 
   public approveRecommendation(idOrCard: string) {
+    this.logger.log(`Approving recommendation ${idOrCard}`);
     this.mustBeInStatus(ApplicantStatus.InRecommendation);
     const recommendation = this.getRecommendation(idOrCard);
 
@@ -136,13 +137,6 @@ export class Applicant extends AggregateRoot {
       recommendation.cardNumber,
     );
     this.applyEvent(recommendationApproved);
-    if (this.isLastNotRecommended(recommendation.cardNumber)) {
-      let paymentRequest = new ApplicantFeePaymentRequested(
-        this.id.value,
-        this.applicationFee.amount,
-      );
-      this.applyEvent(paymentRequest);
-    }
   }
 
   public rejectRecommendation(idOrCard: string) {
@@ -157,6 +151,17 @@ export class Applicant extends AggregateRoot {
 
     let cancelApplication = new ApplicantNotRecommended(this.id.value);
     this.applyEvent(cancelApplication);
+  }
+
+  public requestApplicationFeePayment(year: number, amount: number, dueDate: Date) {
+    this.mustBeInStatus(ApplicantStatus.InRecommendation);
+    let feeRequested = new ApplicantFeePaymentRequested(
+      this.id.value,
+      year,
+      amount,
+      dueDate,
+    );
+    this.applyEvent(feeRequested);
   }
 
   public registerApplicationFeePayment(paidDate: Date) {
@@ -221,6 +226,7 @@ export class Applicant extends AggregateRoot {
   }
 
   public onApplicantApplied(event: ApplicantApplied) {
+    this.logger.log(`Applying ${ApplicantApplied.name} event`);
     this._firstName = event.firstName;
     this._lastName = event.lastName;
     this._email = event.email;
@@ -232,20 +238,23 @@ export class Applicant extends AggregateRoot {
     this._status = ApplicantStatus.New;
   }
 
-  public onApplicantRecommendationsNotValid(
+  public onApplicantRecommendationsValidatedNegative(
     event: ApplicantRecommendationsValidatedNegative,
   ) {
+    this.logger.log(`Applying ${ApplicantRecommendationsValidatedNegative.name} event`);
     this._status = event.status;
-    this._recommendations.every((recommendation) => {
+    this._recommendations.forEach((recommendation) => {
       recommendation.markInvalid();
     });
   }
 
-  public onApplicantRecommendationsValid(event: ApplicantRecommendationsValidatedPositive) {
+  public onApplicantRecommendationsValidatedPositive(event: ApplicantRecommendationsValidatedPositive) {
+    this.logger.log(`Applying ${ApplicantRecommendationsValidatedPositive.name} event`);
     this._status = event.status;
-    this._recommendations.every((recommendation) => {
-      recommendation.markInvalid();
+    this._recommendations.forEach((recommendation) => {
+      recommendation.markValid();
     });
+    console.log("this._recommendations", this._recommendations);
   }
 
   public onApplicantRecommendationApproved(
@@ -265,6 +274,7 @@ export class Applicant extends AggregateRoot {
 
   public onApplicantFeePaymentRequested(event: ApplicantFeePaymentRequested) {
     this._status = ApplicantStatus.AwaitPayment;
+    this._applicationFee = new ApplicationFee(event.amount);
   }
 
   public onApplicantNotRecommended(event: ApplicantNotRecommended) {
@@ -302,17 +312,17 @@ export class Applicant extends AggregateRoot {
   }
 
   private getRecommendation(idOrCard: string): Recommendation {
-    const recommendations = this._recommendations.filter(
+    console.log("idOrCard", idOrCard);
+    console.log("this._recommendations", this._recommendations);
+    const recommendation = this._recommendations.find(
       (recommendation) =>
-        recommendation.cardNumber === idOrCard,
+        (recommendation.cardNumber === idOrCard)
     );
-    if (recommendations.length == 0) {
+    console.log("recommendation", recommendation);
+    if (!recommendation) {
       throw new Error("Recommendation not found");
     }
-    if (recommendations.length > 1) {
-      throw new Error("Multiple recommendations found");
-    }
-    return recommendations[0];
+    return recommendation;
   }
 
   private isLastNotRecommended(id: string): boolean {

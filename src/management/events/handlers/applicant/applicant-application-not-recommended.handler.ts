@@ -1,4 +1,4 @@
-import { IEventHandler, EventHandler, EventEnvelope} from "@ocoda/event-sourcing";
+import { IEventHandler, EventHandler, EventEnvelope } from "@ocoda/event-sourcing";
 import { Repository } from "typeorm";
 import { Applicant } from "../../../model/applicants/applicant.model";
 import { ApplicantNotRecommended } from "../../impl/applicant/applicant-application-not-recommended.events";
@@ -18,7 +18,7 @@ export class ApplicantNotRecommendedHandler
         const event = envelope.payload;
         var applicant = await this.repository.findOne({
             where: { id: event.id },
-            relations: ["recommendations"],
+            relations: ["recommendations", "applicationStatuses"],
         });
         let status = new ApplicationStatus();
         status.status = ApplicantStatus.Cancelled;

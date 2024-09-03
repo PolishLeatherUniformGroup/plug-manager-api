@@ -8,7 +8,16 @@ import { GetApplicants } from "../../impl/applicant/get-applicants.query";
 export class GetApplicantsHandler implements IQueryHandler<GetApplicants, Applicant[]> {
     constructor(@InjectRepository(Applicant) private readonly repository: Repository<Applicant>) { }
     async execute(query: GetApplicants): Promise<Applicant[]> {
-        const all = await this.repository.find()
-        return all.filter((applicant) => applicant.status() === query.status);
+        const all = await this.repository.find({
+            relations: [
+                "applicationStatuses",
+                "recommendations",
+                "applicationFee",
+                "applicationProcess",]
+        })
+        if (!query.status) return all;
+        {
+            return all.filter((applicant) => applicant.status() === query.status);
+        }
     }
 }

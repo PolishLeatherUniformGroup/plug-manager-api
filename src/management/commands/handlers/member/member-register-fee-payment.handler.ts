@@ -1,17 +1,15 @@
 import { CommandHandler, ICommandHandler } from "@ocoda/event-sourcing";
 
 import { MemberAggregateRepository } from "../../../domain/member/member.aggregate-repository";
-import { MemberRequestFeePayment } from "../../impl/member/member-request-fee-payment.command";
 import { MemberRegisterFeePayment } from "../../impl/member/member-register-fee-payment.command";
 import { MemberId } from "../../../domain/member/member-id";
 
-@CommandHandler(MemberRequestFeePayment)
+@CommandHandler(MemberRegisterFeePayment)
 export class MemberRegisterFeePaymentHandler
-  implements ICommandHandler
-{
+  implements ICommandHandler {
   constructor(
     private readonly memberRepository: MemberAggregateRepository,
-  ) {}
+  ) { }
 
   async execute(command: MemberRegisterFeePayment) {
     try {
