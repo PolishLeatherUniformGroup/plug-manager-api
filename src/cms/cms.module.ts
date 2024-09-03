@@ -12,4 +12,4 @@ import { CdnController } from './controllers/cdn.controller';
   controllers: [SectionsController, ArticlesController, ImagesController, CdnController],
   providers: [SectionsService, ImagesService, ArticlesService],
 })
-export class CrmModule {}
+export class CmsModule { }
