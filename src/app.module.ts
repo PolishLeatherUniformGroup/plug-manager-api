@@ -4,8 +4,7 @@ import { ManagementModule } from "./management/management.module";
 import { MailingModule } from './mailing/mailing.module';
 import { CommunityModule } from './community/community.module';
 import { EventingModule } from './eventing/eventing.module';
-import { BlogModule } from './blog/blog.module';
-import { StoreModule } from './store/store.module';
+import { CrmModule } from './crm/crm.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import typeorm from "./config/typeorm";
 import { DataSource } from "typeorm";
@@ -36,8 +35,7 @@ import { JwtStrategy } from "./jwt.strategy";
     MailingModule,
     CommunityModule,
     EventingModule,
-    BlogModule,
-    StoreModule,
+    CrmModule,
   ],
   providers: [JwtStrategy],
 })
