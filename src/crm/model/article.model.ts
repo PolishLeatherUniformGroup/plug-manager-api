@@ -21,9 +21,13 @@ export class Article {
     isPublished: boolean;
     @Column({type: 'bit', default: 0})
     showInMenu: boolean;
+    @Column({type: 'bit', default: 0})
+    isDefault: boolean;
+    @Column({type: 'int', default: 0})
+    order: number;
 
     @Column({type: 'text', nullable: true})
-    content?: string;
+    content: string;
 
     @Column({type: 'varchar', length:255, nullable: true})
     headerImage?: string;
