@@ -8,6 +8,7 @@ import { Reparent } from '../dtos/reparent.dto';
 import { SectionResult } from '../dtos/get-section.dto';
 import { ArticleResult } from '../dtos/get-article.dto';
 import { Reorder } from '../dtos/reorder.dto';
+import { ArticleItem } from '../dtos/article-item.dto';
 
 @Controller('sections')
 @ApiTags('CMS')
@@ -62,7 +63,7 @@ export class SectionsController {
     }
 
     @Get(':id/articles')
-    @ApiOkResponse({ description: 'The record has been successfully retrieved.', type: ArticleResult, isArray: true })
+    @ApiOkResponse({ description: 'The record has been successfully retrieved.', type: ArticleItem, isArray: true })
     getSectionArticles(@Param('id') id: number) {
         return this.sectionsService.getSectionArticles(id);
     }
