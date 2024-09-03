@@ -51,6 +51,7 @@
     "rxjs": "^7.8.1",
     "save": "^2.9.0",
     "shallow-equal-object": "^1.1.1",
+    "swagger-ui-express": "^4.6.3",
     "typeorm": "^0.3.20"
   },
   "devDependencies": {

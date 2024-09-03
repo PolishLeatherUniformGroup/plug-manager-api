@@ -184,7 +184,8 @@ export class MapperService {
     } as RecommendationDto;
   }
 
-  public mapToRequiredFee(fee: ApplicationFeeModel): RequiredFee {
+  public mapToRequiredFee(fee?: ApplicationFeeModel): RequiredFee {
+    if (!fee) return null;
     return {
       requiredAmount: fee.dueAmount,
       paidAmount: fee.paidAmount,
@@ -307,8 +308,11 @@ export class MapperService {
       firstName: member.firstName,
       lastName: member.lastName,
       email: member.email,
+      birthDate: member.birthDate,
+      joinDate: member.joinDate,
       phoneNumber: member.phoneNumber,
       address: this.mapToAddressDto(member.address),
+      status: member.status,
     } as Member;
   }
 
