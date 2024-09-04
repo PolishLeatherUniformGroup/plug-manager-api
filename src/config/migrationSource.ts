@@ -12,8 +12,10 @@ export default new DataSource({
     synchronize: false,
     dropSchema: false,
     logging: true,
-    entities: ['dist/management/model/**/*.model{.ts,.js}',
-        'dist/crm/model/*.model{.ts,.js}',
+    entities: [
+        'dist/management/model/**/*.model{.ts,.js}',
+        'dist/cms/model/*.model{.ts,.js}',
+        'dist/settings/model/*.model{.ts,.js}',
     ],
     migrations: ['src/migrations/**/*.ts'],
     migrationsTableName: 'migration_table',

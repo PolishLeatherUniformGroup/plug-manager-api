@@ -6,9 +6,17 @@ import { ImagesController } from './controllers/images.controller';
 import { ImagesService } from './services/images.service';
 import { ArticlesService } from './services/articles.service';
 import { CdnController } from './controllers/cdn.controller';
+import { Article } from './model/article.model';
+import { Section } from './model/section.model';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 
 @Module({
+  imports: [
+    TypeOrmModule.forFeature([
+      Article, Section
+    ]),
+  ],
   controllers: [SectionsController, ArticlesController, ImagesController, CdnController],
   providers: [SectionsService, ImagesService, ArticlesService],
 })

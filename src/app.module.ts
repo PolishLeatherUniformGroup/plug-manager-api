@@ -11,6 +11,7 @@ import { DataSource } from "typeorm";
 import { AppLoggerMiddleware } from "./app-logger";
 import { PassportModule } from "@nestjs/passport";
 import { JwtStrategy } from "./jwt.strategy";
+import { SettingsModule } from './settings/settings.module';
 
 @Module({
   imports: [
@@ -36,8 +37,10 @@ import { JwtStrategy } from "./jwt.strategy";
     CommunityModule,
     EventingModule,
     CmsModule,
+    SettingsModule,
   ],
   providers: [JwtStrategy],
+  controllers: [],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {
