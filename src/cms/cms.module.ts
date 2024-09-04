@@ -6,18 +6,20 @@ import { ImagesController } from './controllers/images.controller';
 import { ImagesService } from './services/images.service';
 import { ArticlesService } from './services/articles.service';
 import { CdnController } from './controllers/cdn.controller';
+import { CommandHandlers } from './commands/handlers';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { Article } from './model/article.model';
 import { Section } from './model/section.model';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { Image } from './model/image.model';
+import { CqrsModule } from '@nestjs/cqrs';
 
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([
-      Article, Section
-    ]),
-  ],
+  imports: [TypeOrmModule.forFeature([
+    Section, Article, Image
+  ]),
+    CqrsModule],
   controllers: [SectionsController, ArticlesController, ImagesController, CdnController],
-  providers: [SectionsService, ImagesService, ArticlesService],
+  providers: [SectionsService, ImagesService, ArticlesService, ...CommandHandlers],
 })
 export class CmsModule { }

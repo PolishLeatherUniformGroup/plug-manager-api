@@ -1,6 +1,6 @@
 import { ICommand } from "@ocoda/event-sourcing";
 
-export class ReparentSection  implements ICommand {
+export class ReparentSectionCommand  implements ICommand {
     constructor(
         public readonly id: number,        
         public readonly updatedBy: string,
