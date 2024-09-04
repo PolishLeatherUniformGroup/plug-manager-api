@@ -10,7 +10,6 @@ export class CreateSectionCommand implements ICommand {
         public readonly language: string = "PL", 
         public readonly order: number = 0,
         public readonly parent?: number,
-        public readonly content?: string,
         public readonly description?: string,
         public readonly keywords?: string[],
     ) { }

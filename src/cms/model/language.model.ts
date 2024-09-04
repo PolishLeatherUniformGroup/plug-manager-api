@@ -2,6 +2,6 @@ import { Column } from "typeorm";
 
 export class Language{
     
-    @Column({type: 'enum', enum: ["PL", "EN"], default: "PL"})
-    code: "PL" | "EN"
+    @Column({type: 'varchar', length: 2})
+    code: string;
 }
