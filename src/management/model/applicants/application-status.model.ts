@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Applicant } from "./applicant.model";
 
-@Entity()
+@Entity('membrship_application_statuses')
 export class ApplicationStatus {
 
     @PrimaryGeneratedColumn()

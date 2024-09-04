@@ -5,11 +5,14 @@ export class Feature {
     id: number;
 
     @ApiProperty()
+    key: string
+
+    @ApiProperty()
     name: string;
 
     @ApiProperty()
     description: string;
 
-    @ApiProperty()
+    @ApiProperty({ type: 'boolean' })
     enabled: boolean;
 }

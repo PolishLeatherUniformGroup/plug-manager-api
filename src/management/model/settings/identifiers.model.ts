@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
 
-@Entity()
+@Entity('membership_identifiers')
 export class Identifier {
     @PrimaryGeneratedColumn({ type: "int" })
     id: number;

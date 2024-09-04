@@ -5,11 +5,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ApplicationFeature } from './model/feature.model';
 import { ConfigurationController } from './controllers/configuration.controller';
 import { ConfigurationService } from './services/configuration.service';
+import { Config } from './model/config.model';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      ApplicationFeature,
+      ApplicationFeature, Config
     ]),
   ],
   controllers: [FeaturesController, ConfigurationController],

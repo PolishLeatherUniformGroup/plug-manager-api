@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Member } from "./member.model";
 
-@Entity()
+@Entity('membership_member_fees')
 export class MembershipFee {
   @PrimaryGeneratedColumn()
   public id: number;

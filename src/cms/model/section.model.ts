@@ -4,7 +4,7 @@ import { Metadata } from "./metadata.model";
 import { Article } from "./article.model";
 import { Language } from "./language.model";
 
-@Entity()
+@Entity('cms_sections')
 export class Section {
 
     @PrimaryGeneratedColumn({ type: 'bigint' })

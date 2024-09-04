@@ -1,11 +1,8 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { Repository } from "typeorm";
 import { Member } from "../model/members/member.model";
-import { MemberCard } from "../model/members/card.model";
-import { InjectRepository } from "@nestjs/typeorm";
 import { OverrideFee } from "../dto/requests/overrride-fee";
 import { MapperService } from "./maper.service";
-import { CommandBus, getQueryMetadata, QueryBus } from "@ocoda/event-sourcing";
+import { CommandBus, QueryBus } from "@ocoda/event-sourcing";
 import { MembershipFeePayment } from "../dto/requests/membership-fee-payment";
 import { Suspension } from "../dto/requests/suspension.request";
 import { Appeal } from "../dto/requests/appeal.request";

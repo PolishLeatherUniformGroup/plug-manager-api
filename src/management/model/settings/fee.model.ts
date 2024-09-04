@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryColumn } from "typeorm";
 
-@Entity()
+@Entity('membership_fees')
 export class Fee {
     @PrimaryColumn()
     year: number;

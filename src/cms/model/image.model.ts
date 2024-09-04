@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
 import { Article } from "./article.model";
 
-@Entity("image")
+@Entity("cms_images")
 export class Image {
     @PrimaryGeneratedColumn({type: 'bigint'})
     id: number;

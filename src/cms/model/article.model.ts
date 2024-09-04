@@ -5,7 +5,7 @@ import { Updates } from "./updates.model";
 import { Language } from "./language.model";
 import { Image } from "./image.model";
 
-@Entity()
+@Entity('cms_articles')
 export class Article {
     @PrimaryGeneratedColumn({ type: 'bigint' })
     id: number;

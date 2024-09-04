@@ -16,6 +16,12 @@ export class FeaturesController {
         return this.featureService.getFeatures();
     }
 
+    @Get(':key')
+    @ApiOkResponse({ type: Feature, isArray: true })
+    public async getFeature(@Param('key') key:string): Promise<Feature> {
+        return this.featureService.getFeature(key);
+    }
+
     @Post()
     public async addFeature(@Body() feature: AddFeature) {
         await this.featureService.addFeature(feature);

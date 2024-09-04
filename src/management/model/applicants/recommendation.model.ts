@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import { Applicant } from "./applicant.model";
 
-@Entity()
+@Entity('membership_applicant_recommendations')
 export class Recommendation {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   public id?: number;

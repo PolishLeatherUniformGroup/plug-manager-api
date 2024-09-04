@@ -1,24 +1,32 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { ApplicationFeature } from '../model/feature.model';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Feature as FeatureDto } from '../dto/feature.dto';
 import { AddFeature } from '../dto/add-feature.dto';
 import { Switch } from '../dto/switch.dto';
+import { log } from 'console';
 
 
 @Injectable()
 export class FeaturesService {
+
+    private readonly logger = new Logger(FeaturesService.name);
     constructor(@InjectRepository(ApplicationFeature) private readonly repository: Repository<ApplicationFeature>) { }
 
     public async getFeatures(): Promise<FeatureDto[]> {
-        const entities = await this.repository.find();
-        return entities.map(entity => ({
-            id: entity.id,
-            name: entity.name,
-            description: entity.description,
-            enabled: entity.enabled
-        }));
+        const entities: ApplicationFeature[] = await this.repository.find();
+        this.logger.debug(`Found ${entities.length} features`);
+        return entities.map(entity => {
+            this.logger.debug(`Mapping feature ${entity.id}: ${JSON.stringify(entity)}`);
+            return {
+                id: entity.id,
+                key: entity.key,
+                name: entity.name,
+                description: entity.description,
+                enabled: entity.enabled
+            } as FeatureDto;
+        });
     }
 
     public async addFeature(feature: AddFeature) {
@@ -33,5 +41,16 @@ export class FeaturesService {
         var entity = await this.repository.findOneBy({ id });
         entity.enabled = body.enabled;
         await this.repository.save(entity);
+    }
+
+    async getFeature(key: string): Promise<FeatureDto | PromiseLike<FeatureDto>> {
+        var entity = await this.repository.findOneBy({ key });
+        return {
+            id: entity.id,
+            key: entity.key,
+            name: entity.name,
+            description: entity.description,
+            enabled: entity.enabled
+        } as FeatureDto;
     }
 }

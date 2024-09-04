@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryColumn } from "typeorm";
 
-@Entity()
+@Entity('settings_values')
 export class Config {
 
     @PrimaryColumn({ type: "varchar", length: 255 })

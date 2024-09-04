@@ -1,15 +1,15 @@
 import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from "typeorm";
 import { Applicant } from "./applicant.model";
 
-@Entity()
+@Entity('membership_application_fees')
 export class ApplicationFee {
   @PrimaryColumn()
   public applicantId: string;
-  @Column({nullable: true})
+  @Column({ nullable: true })
   public dueAmount?: number;
-  @Column({nullable: true})
+  @Column({ nullable: true })
   public paidAmount?: number;
-  @Column({nullable: true})
+  @Column({ nullable: true })
   public paidDate?: Date;
   @OneToOne(() => Applicant, (applicant) => applicant.applicationFee)
   @JoinColumn({ name: "applicantId" })

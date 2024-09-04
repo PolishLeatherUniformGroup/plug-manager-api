@@ -6,7 +6,7 @@ import { ApplicationProcess } from "./application-process.model";
 import { ApplicationStatus } from "./application-status.model";
 
 
-@Entity()
+@Entity('membership_applicants')
 export class Applicant {
   @PrimaryColumn()
   public id: string;
