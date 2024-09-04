@@ -1,4 +1,4 @@
-import { ICommand } from "@ocoda/event-sourcing";
+import { ICommand } from "@nestjs/cqrs"
 
 export class CreateSectionCommand implements ICommand {
     constructor(

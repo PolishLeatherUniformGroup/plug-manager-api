@@ -1,4 +1,4 @@
-import { CommandHandler, ICommandHandler } from "@ocoda/event-sourcing";
+import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { UpdateSectionCommand } from "../impl/update-section.command";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
@@ -16,12 +16,12 @@ export class UpdateSectionHandler implements ICommandHandler<UpdateSectionComman
         section.showInMenu = command.showInMenu;
         section.updates.updated_by = command.updatedBy;
         section.updates.updated_at = command.updatedAt;
-        if(section.metadata === undefined){
+        if (section.metadata === undefined) {
             section.metadata = new Metadata();
         }
         section.metadata.description = command.description;
         section.metadata.keywords = command.keywords.join(',');
-        
+
         await this.repository.save(section);
     }
 }

@@ -1,4 +1,4 @@
-import { CommandHandler, ICommandHandler } from "@ocoda/event-sourcing";
+import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { Repository } from "typeorm";
 import { Section } from "../../model/section.model";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -11,15 +11,15 @@ export class ReparentSectionHandler implements ICommandHandler<ReparentSectionCo
     async execute(command: ReparentSectionCommand): Promise<void> {
         const section = await this.repository.findOne({ where: { id: command.id } });
         let newParent;
-        if(command.parentId){
-            newParent = await this.repository.findOne({where:{id: command.parentId}});
-        }else{
+        if (command.parentId) {
+            newParent = await this.repository.findOne({ where: { id: command.parentId } });
+        } else {
             section.parent = null;
             await this.repository.save(section);
             return;
-        }      
-      
-        if(newParent){
+        }
+
+        if (newParent) {
             section.parent = newParent;
             await this.repository.save(section);
             return;

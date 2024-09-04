@@ -1,4 +1,4 @@
-import { CommandHandler, ICommandHandler } from "@ocoda/event-sourcing";
+import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { PublishSectionCommand } from "../impl/publish-section.command";
 import { Repository } from "typeorm";
 import { Section } from "../../model/section.model";

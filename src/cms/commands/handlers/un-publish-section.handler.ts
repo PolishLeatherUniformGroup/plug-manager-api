@@ -1,4 +1,4 @@
-import { CommandHandler, ICommandHandler } from "@ocoda/event-sourcing";
+import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { Repository } from "typeorm";
 import { Section } from "../../model/section.model";
 import { InjectRepository } from "@nestjs/typeorm";

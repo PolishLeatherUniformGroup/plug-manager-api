@@ -1,4 +1,4 @@
-import { ICommand } from "@ocoda/event-sourcing";
+import { ICommand } from "@nestjs/cqrs";
 
 export class UnPublishSectionCommand implements ICommand {
     constructor(
