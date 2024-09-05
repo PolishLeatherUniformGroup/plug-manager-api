@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Post, Put, Logger } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { Feature } from '../dto/feature.dto';
 import { AddFeature } from '../dto/add-feature.dto';
@@ -8,6 +8,7 @@ import { FeaturesService } from '../services/features.service';
 @Controller('features')
 @ApiTags('Configuration')
 export class FeaturesController {
+    private readonly Logger = new Logger(FeaturesController.name);
     constructor(private readonly featureService: FeaturesService) { }
 
     @Get()
@@ -33,6 +34,7 @@ export class FeaturesController {
 
     @Put(':id/switch')
     public async switch(@Param('id') id: number, @Body() body: Switch) {
+        Logger.log(`Received switch request for feature ${id} to ${body.enabled}`);
         await this.featureService.switch(id, body);
     }
 }

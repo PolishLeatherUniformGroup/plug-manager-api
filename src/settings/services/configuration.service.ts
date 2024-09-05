@@ -1,12 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Config } from '../model/config.model';
 import { Repository } from 'typeorm';
 import { ConfigValue } from '../dto/config-value.dto';
+import { log } from 'console';
 
 @Injectable()
 export class ConfigurationService {
-    
+    private readonly logger = new Logger(ConfigurationService.name);
     private installedKey: string = 'app_installed';
     constructor(@InjectRepository(Config) private readonly repository: Repository<Config>) { }
 
@@ -21,7 +22,7 @@ export class ConfigurationService {
         return this.toValue(val.value, val.valueType) as boolean;
     }
 
-    async getValues() :Promise<ConfigValue[]> {
+    async getValues(): Promise<ConfigValue[]> {
         const configs = await this.repository.find();
         return configs.map(config => {
             return {
@@ -34,6 +35,7 @@ export class ConfigurationService {
     }
 
     async updateValue(key: string, value?: string) {
+        this.logger.log(`Updating config ${key} to ${value}`);
         let config = await this.repository.findOne({ where: { key: key } });
         if (config === undefined) {
             return;
@@ -45,6 +47,9 @@ export class ConfigurationService {
     }
 
     async getValue(key: string): Promise<ConfigValue | null> {
+        if (key === null) {
+            throw new BadRequestException('Key cannot be null');
+        }
         let config = await this.repository.findOne({ where: { key: key } });
         if (config === undefined) {
             return null;

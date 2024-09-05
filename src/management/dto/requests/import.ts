@@ -1,4 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { Address } from "../address.dto";
 
 export class ImportedMember {
     @ApiProperty()
@@ -15,6 +16,8 @@ export class ImportedMember {
     public joinDate: Date;
     @ApiPropertyOptional()
     public phone?: string;
+    @ApiPropertyOptional()
+    public address?: Address;
 }
 
 export class Import {
