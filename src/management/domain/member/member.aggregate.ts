@@ -93,6 +93,7 @@ export class Member extends AggregateRoot {
     paidAmount: number,
     birthDate?: Date,
     phone?: string,
+    address?: Address,
   ) {
     const member = new Member(id);
     var created = new MemberImported(
@@ -102,9 +103,9 @@ export class Member extends AggregateRoot {
       lastName,
       email,
       joinDate,
-      paidAmount,
       birthDate,
-      phone
+      phone,
+      address,
     );
     member.applyEvent(created);
     return member;
@@ -278,7 +279,6 @@ export class Member extends AggregateRoot {
   }
 
   public onMemberCreated(event: MemberCreated): void {
-    console.log("MemberCreated", event);
     this._cardNumber = event.cardNumber;
     this._firstName = event.firstName;
     this._lastName = event.lastName;
@@ -287,7 +287,7 @@ export class Member extends AggregateRoot {
     this._applyDate = event.applyDate;
     this._birthDate = event.birthDate;
     this._joinDate = event.joinDate;
-    this._status = MemberStatus.Active;
+    this._status = MemberStatus.Created;
     this._membershipFees = [
       new MembershipFee(
         event.joinDate.getFullYear(),
@@ -377,9 +377,8 @@ export class Member extends AggregateRoot {
     this._joinDate = event.joinDate;
     this._birthDate = event.birthDate;
     this._status = MemberStatus.Active;
-    this._membershipFees = [
-      new MembershipFee(new Date().getFullYear(), event.paid, new Date(new Date().getFullYear(), 0, 1)),
-    ];
+    this._address = event.address ? Address.create(event.address.country, event.address.city, event.address.postalCode, event.address.street, event.address.house, event.address.region, event.address.region) : null;
+    this._status = MemberStatus.Created;
   }
 
   private mustHaveStatus(status: MemberStatus) {

@@ -14,7 +14,6 @@ export class MemberImportedHandler implements IEventHandler {
     constructor(
         @InjectRepository(Member)
         private readonly repository: Repository<Member>,
-        private readonly mapperService: MapperService,
     ) { }
 
     public async handle(envelope: EventEnvelope<MemberImported>): Promise<void> {
@@ -27,16 +26,9 @@ export class MemberImportedHandler implements IEventHandler {
         member.email = event.email;
         member.phoneNumber = event.phoneNumber;
         member.joinDate = event.joinDate;
-        member.status = MemberStatus.Active;
+        member.status = MemberStatus.Created;
         member.birthDate = event.birthDate;
-        var fee = new MembershipFee();
-        fee.year = new Date().getFullYear();
-        fee.dueAmount = event.paid;
-        fee.paidAmount = event.paid;
-        fee.dueDate = new Date(new Date().getFullYear(), 2, 31);
-        fee.paidDate = new Date(new Date().getFullYear(), 0, 31);
-        fee.member = member;
-        member.membershipFees = [fee];
+        member.address = event.address;
 
         await this.repository.save(member);
     }

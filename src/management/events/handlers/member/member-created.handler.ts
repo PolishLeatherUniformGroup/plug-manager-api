@@ -5,7 +5,7 @@ import { MembershipFee } from "../../../model/members/membership-fee.model";
 import { MapperService } from "../../../services/maper.service";
 import { MemberStatus } from "../../../domain/member/member-status.enum";
 import { InjectRepository } from "@nestjs/typeorm";
-import { EventHandler, IEventHandler, EventEnvelope } from "@ocoda/event-sourcing";
+import { EventHandler, IEventHandler, EventEnvelope, CommandBus } from "@ocoda/event-sourcing";
 
 @EventHandler(MemberCreated)
 export class MemberCreatedHandler implements IEventHandler {
@@ -13,6 +13,7 @@ export class MemberCreatedHandler implements IEventHandler {
     @InjectRepository(Member)
     private readonly repository: Repository<Member>,
     private readonly mapperService: MapperService,
+    private readonly commandBus: CommandBus,
   ) { }
 
   public async handle(envelope: EventEnvelope<MemberCreated>): Promise<void> {
@@ -24,7 +25,7 @@ export class MemberCreatedHandler implements IEventHandler {
     member.email = event.email;
     member.phoneNumber = event.phoneNumber;
     member.joinDate = event.joinDate;
-    member.status = MemberStatus.Active;
+    member.status = MemberStatus.Created;
     member.birthDate = event.birthDate;
     member.address = this.mapperService.mapToViewObject(event.address);
 

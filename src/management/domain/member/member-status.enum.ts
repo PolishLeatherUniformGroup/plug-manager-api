@@ -1,8 +1,9 @@
 export enum MemberStatus {
-  Active = 0,
-  Suspended = 1,
-  Expelled = 2,
-  Terminated = 3,
-  SuspensionAppealed = 4,
-  ExpulsionAppealed = 5,
+  Created = 0,
+  Active = 1,
+  Suspended = 2,
+  Expelled = 3,
+  Terminated = 4,
+  SuspensionAppealed = 5,
+  ExpulsionAppealed = 6,
 }

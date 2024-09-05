@@ -16,6 +16,7 @@ import { Import } from "../dto/requests/import";
 import { MemberImport } from "../commands/impl/member/member-import.command";
 import { GetMember } from "../queries/impl/member/get-member.query";
 import { MembershipFee } from "../dto/requests/membership-fee";
+import { ImportedMember } from "../domain/member-import";
 
 @Injectable()
 export class MemberService {
@@ -37,7 +38,18 @@ export class MemberService {
   }
 
   public async importMembers(body: Import) {
-    const commansd = new MemberImport(body.members);
+    this.logger.log(`Importing members ${JSON.stringify(body)}`);
+    const data = body.members.map(m => ({
+      cardNumber: m.cardNumber,
+      firstName: m.firstName,
+      lastName: m.lastName,
+      email: m.email,
+      joinDate: m.joinDate,
+      birthDate: m.birthDate,
+      phone: m.phone,
+      address: m.address ? m.address : undefined,
+    } as ImportedMember));
+    const commansd = new MemberImport(data);
     await this.commandBus.execute(commansd);
   }
 

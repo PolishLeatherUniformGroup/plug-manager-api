@@ -1,5 +1,6 @@
 import { IEvent, Event, EventSerializer, IEventPayload, IEventSerializer } from "@ocoda/event-sourcing";
 import { ApplicantApplied } from "../applicant/applicant-applied.event";
+import { Address } from "../../../dto/address.dto";
 
 @Event('member-imported')
 export class MemberImported implements IEvent {
@@ -10,14 +11,14 @@ export class MemberImported implements IEvent {
         public readonly lastName: string,
         public readonly email: string,
         public readonly joinDate: Date,
-        public readonly paid: number,
         public readonly birthDate?: Date,
         public readonly phoneNumber?: string,
+        public readonly address?: Address,
     ) { }
 }
 @EventSerializer(MemberImported)
 export class MemberImportedSerializer implements IEventSerializer {
-    serialize({ id, firstName, lastName, email, phoneNumber, cardNumber, birthDate, joinDate, paid }: MemberImported): IEventPayload<MemberImported> {
+    serialize({ id, firstName, lastName, email, phoneNumber, cardNumber, birthDate, joinDate, address }: MemberImported): IEventPayload<MemberImported> {
         return {
             id,
             cardNumber,
@@ -27,11 +28,11 @@ export class MemberImportedSerializer implements IEventSerializer {
             phoneNumber,
             birthDate: birthDate?.toISOString(),
             joinDate: joinDate.toISOString(),
-            paid,
+            address: JSON.stringify(address),
         };
     }
 
-    deserialize({ id, firstName, lastName, email, phoneNumber, cardNumber, birthDate, joinDate, paid }: IEventPayload<MemberImported>): MemberImported {
-        return new MemberImported(id, cardNumber, firstName, lastName, email, new Date(joinDate), paid, birthDate ? new Date(birthDate) : undefined, phoneNumber);
+    deserialize({ id, firstName, lastName, email, phoneNumber, cardNumber, birthDate, joinDate, address }: IEventPayload<MemberImported>): MemberImported {
+        return new MemberImported(id, cardNumber, firstName, lastName, email, new Date(joinDate), birthDate ? new Date(birthDate) : undefined, phoneNumber, JSON.parse(address));
     }
 }

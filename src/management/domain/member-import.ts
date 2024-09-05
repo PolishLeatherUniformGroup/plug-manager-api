@@ -1,3 +1,4 @@
+import { Address } from "./address.value-object";
 
 export class ImportedMember {
     constructor(
@@ -8,5 +9,6 @@ export class ImportedMember {
         public joinDate: Date,
         public birthDate?: Date,
         public phone?: string,
+        public address?: Address,
     ) { }
 }

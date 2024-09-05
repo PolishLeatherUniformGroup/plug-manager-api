@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Query } from "@nestjs/common";
+import { Body, Controller, Get, Logger, Param, Post, Put, Query } from "@nestjs/common";
 import { ApiAcceptedResponse, ApiCreatedResponse, ApiOkResponse, ApiQuery, ApiTags } from "@nestjs/swagger";
 import { ContactData } from '../dto/requests/contact-data.request';
 import { OverrideFee } from "../dto/requests/overrride-fee";
@@ -18,11 +18,14 @@ import { Import } from "../dto/requests/import";
 @Controller("members")
 @ApiTags("Management")
 export class MembersController {
-
+    private readonly logger = new Logger(MembersController.name);
     constructor(private readonly memberService: MemberService) { }
 
     @Put()
     public async importMembers(@Body() body: Import): Promise<void> {
+        if (body === null) {
+            throw new Error("Body is null");
+        }
         await this.memberService.importMembers(body);
     }
 
