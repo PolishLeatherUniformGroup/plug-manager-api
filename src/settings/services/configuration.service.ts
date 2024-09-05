@@ -2,9 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Config } from '../model/config.model';
 import { Repository } from 'typeorm';
+import { ConfigValue } from '../dto/config-value.dto';
 
 @Injectable()
 export class ConfigurationService {
+    
     private installedKey: string = 'app_installed';
     constructor(@InjectRepository(Config) private readonly repository: Repository<Config>) { }
 
@@ -19,8 +21,16 @@ export class ConfigurationService {
         return this.toValue(val.value, val.valueType) as boolean;
     }
 
-    async get(): Promise<Config[]> {
-        return this.repository.find();
+    async getValues() :Promise<ConfigValue[]> {
+        const configs = await this.repository.find();
+        return configs.map(config => {
+            return {
+                key: config.key,
+                value: config.value,
+                description: config.description,
+                valueType: config.valueType
+            } as ConfigValue;
+        });
     }
 
     async updateValue(key: string, value?: string) {
@@ -34,12 +44,17 @@ export class ConfigurationService {
         await this.repository.save(config);
     }
 
-    async getValue(key: string): Promise<string | null> {
+    async getValue(key: string): Promise<ConfigValue | null> {
         let config = await this.repository.findOne({ where: { key: key } });
         if (config === undefined) {
             return null;
         }
-        return config.value;
+        return {
+            key: config.key,
+            value: config.value,
+            description: config.description,
+            valueType: config.valueType
+        } as ConfigValue;
     }
 
     private toValue(value: string, type: "string" | "number" | "boolean"): boolean | string | number {

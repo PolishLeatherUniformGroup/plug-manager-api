@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { Feature } from '../dto/feature.dto';
 import { AddFeature } from '../dto/add-feature.dto';
@@ -18,8 +18,12 @@ export class FeaturesController {
 
     @Get(':key')
     @ApiOkResponse({ type: Feature, isArray: true })
-    public async getFeature(@Param('key') key:string): Promise<Feature> {
-        return this.featureService.getFeature(key);
+    public async getFeature(@Param('key') key: string): Promise<Feature> {
+        const feature = await this.featureService.getFeature(key);
+        if (!feature) {
+            throw new BadRequestException(`Feature with key ${key} not found`);
+        }
+        return feature;
     }
 
     @Post()

@@ -43,8 +43,11 @@ export class FeaturesService {
         await this.repository.save(entity);
     }
 
-    async getFeature(key: string): Promise<FeatureDto | PromiseLike<FeatureDto>> {
-        var entity = await this.repository.findOneBy({ key });
+    async getFeature(key: string): Promise<FeatureDto | null> {
+        var entity = await this.repository.findOneBy({ key: key });
+        if (!entity) {
+            return null;
+        }
         return {
             id: entity.id,
             key: entity.key,
