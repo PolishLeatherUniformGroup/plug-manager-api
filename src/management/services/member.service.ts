@@ -17,6 +17,7 @@ import { MemberImport } from "../commands/impl/member/member-import.command";
 import { GetMember } from "../queries/impl/member/get-member.query";
 import { MembershipFee } from "../dto/requests/membership-fee";
 import { ImportedMember } from "../domain/member-import";
+import { ActivateMemberCommand } from "../commands/impl/member/member-activate.command";
 
 @Injectable()
 export class MemberService {
@@ -51,6 +52,11 @@ export class MemberService {
     } as ImportedMember));
     const commansd = new MemberImport(data);
     await this.commandBus.execute(commansd);
+  }
+
+  async activate(id: string) {
+    const command = new ActivateMemberCommand(id);
+    await this.commandBus.execute(command);
   }
 
   public async requestFee(idOrCard: string, body: MembershipFee): Promise<void> {

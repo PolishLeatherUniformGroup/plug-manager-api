@@ -19,6 +19,7 @@ import { SettingsController } from "./controllers/settings.controller";
 import { MembershipFee } from "./model/members/membership-fee.model";
 import { Suspension } from "./model/members/suspension.model";
 import { Expulsion } from "./model/members/expulsion.model";
+import { IntgrationEventListeners } from "./integration/listeners";
 
 @Module({
   imports: [TypeOrmModule.forFeature([
@@ -37,7 +38,7 @@ import { Expulsion } from "./model/members/expulsion.model";
     events: [...Events],
   })],
   controllers: [MembersController, ApplicantsController, SettingsController],
-  providers: [...Services, ...ApplicantDomain, ...MemberDomain],
+  providers: [...Services, ...ApplicantDomain, ...MemberDomain, ...IntgrationEventListeners],
 })
 export class ManagementModule implements OnModuleInit {
   constructor(private readonly eventStore: EventStore) { }

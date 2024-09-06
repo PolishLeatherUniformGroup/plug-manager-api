@@ -29,6 +29,12 @@ export class MembersController {
         await this.memberService.importMembers(body);
     }
 
+    @Put(":id/activation")
+    @ApiAcceptedResponse()
+    public async activate(@Param("id") idOrCard: string): Promise<void> {
+        await this.memberService.activate(idOrCard);
+    }
+
     @Post(":idOrCard/membership-fees")
     @ApiCreatedResponse()
     public async requestFee(@Param("idOrCard") idOrCard: string, @Body() body: OverrideFee): Promise<void> {

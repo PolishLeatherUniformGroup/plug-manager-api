@@ -12,9 +12,20 @@ import { AppLoggerMiddleware } from "./app-logger";
 import { PassportModule } from "@nestjs/passport";
 import { JwtStrategy } from "./jwt.strategy";
 import { SettingsModule } from './settings/settings.module';
+import { EventEmitterModule } from "@nestjs/event-emitter";
+import { OpenTelemetryModule } from 'nestjs-otel';
 
 @Module({
   imports: [
+    OpenTelemetryModule.forRoot({
+      metrics: {
+        hostMetrics: true,
+        apiMetrics: {
+          enable: true,
+
+        },
+      },
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [typeorm],
@@ -32,6 +43,7 @@ import { SettingsModule } from './settings/settings.module';
 
     }),
     PassportModule.register({ defaultStrategy: 'jwt' }),
+    EventEmitterModule.forRoot(),
     ManagementModule,
     MailingModule,
     CommunityModule,

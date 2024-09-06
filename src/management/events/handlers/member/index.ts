@@ -13,9 +13,11 @@ import { MemberExpulsionApealRejectedHandler } from "./member-expulsion-appeal-r
 import { MemberMembershipTerminatedHandler } from "./member-membership-terminated.handler";
 import { MemberSuspensionApealedHandler } from "./member-suspension-appealed.handler";
 import { MemberImportedHandler } from "./member-imported.handler";
+import { MemberActivatedHandler } from "./member-activated.handler";
 
 export const MemberEventHandlers = [
     MemberCreatedHandler,
+    MemberActivatedHandler,
     MemberContactDataUpdatedHandler,
     MemberMembershipFeePaymentRequestedHandler,
     MemberMembershipFeePaidHandler,

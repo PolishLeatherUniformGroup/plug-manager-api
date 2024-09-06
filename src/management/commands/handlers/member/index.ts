@@ -13,9 +13,11 @@ import { MemberTerminateMembershipHandler } from './member-terminate-membership.
 import { MemberImportHandler } from "./member-import.handler";
 import { MemberRequestFeePaymentHandler } from "./member-request-fee-payment.handler";
 import { MemberOverrideRequestFeePayment } from "../../impl/member/member-override-request-fee-payment.command";
+import { ActivateMemberCommandHandler } from "./member-activate.handler";
 
 export const MemberCommandHandlers = [
     MemberCreateHandler,
+    ActivateMemberCommandHandler,
     MemberUpdateContactDataHandler,
     MemberRequestFeePaymentHandler,
     MemberOverrideRequestFeePayment,

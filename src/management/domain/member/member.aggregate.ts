@@ -18,6 +18,8 @@ import { MemberExpulsionApealAccepted } from "../../events/impl/member/member-ex
 import { MemberExpulsionApealRejected } from "../../events/impl/member/member-expulsion-appeal-rejected.event";
 import { MemberId } from "./member-id";
 import { MemberImported } from "../../events/impl/member/member-imported.event";
+import { MemberActivatedEvent } from "../../integration/events/member-activated.event";
+import { MemberActivated } from "../../events/impl/member/member-activates.event";
 
 @Aggregate({ streamName: "member" })
 export class Member extends AggregateRoot {
@@ -139,6 +141,10 @@ export class Member extends AggregateRoot {
     );
     member.applyEvent(created);
     return member;
+  }
+
+  public activate() {
+    this.applyEvent(new MemberActivated(this.id.value));
   }
 
   public requestMembershipFeePayment(
@@ -379,6 +385,10 @@ export class Member extends AggregateRoot {
     this._status = MemberStatus.Active;
     this._address = event.address ? Address.create(event.address.country, event.address.city, event.address.postalCode, event.address.street, event.address.house, event.address.region, event.address.region) : null;
     this._status = MemberStatus.Created;
+  }
+
+  public onMemberActivated(event: MemberActivatedEvent): void {
+    this._status = MemberStatus.Active;
   }
 
   private mustHaveStatus(status: MemberStatus) {

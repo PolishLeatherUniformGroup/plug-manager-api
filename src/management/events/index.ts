@@ -12,6 +12,7 @@ import { ApplicantRecommendationApproved } from "./impl/applicant/applicant-reco
 import { ApplicantRecommendationRejected } from "./impl/applicant/applicant-recommendation-rejected.event";
 import { ApplicantRecommendationsValidatedNegative } from "./impl/applicant/applicant-recommendations-invalid.events";
 import { ApplicantRecommendationsValidatedPositive } from "./impl/applicant/applicant-recommendations-valid.event";
+import { MemberActivated } from "./impl/member/member-activates.event";
 import { MemberContactDataUpdated } from "./impl/member/member-contact-data-updated.event";
 import { MemberCreated } from "./impl/member/member-created.event";
 import { MemberExpelled } from "./impl/member/member-expelled.event";
@@ -57,5 +58,6 @@ export const Events = [
     MemberExpulsionApealAccepted,
     MemberExpulsionApealRejected,
     MemberMembershipTerminated,
-    MemberImported
+    MemberImported,
+    MemberActivated
 ];

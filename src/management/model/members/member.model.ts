@@ -4,7 +4,7 @@ import { MembershipFee } from "./membership-fee.model";
 import { Suspension } from "./suspension.model";
 import { Expulsion } from "./expulsion.model";
 
-@Entity('membrship_members')
+@Entity('membership_members')
 export class Member {
   @PrimaryColumn()
   public id: string;

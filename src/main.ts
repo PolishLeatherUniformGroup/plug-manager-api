@@ -2,10 +2,13 @@ import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import * as dotenv from 'dotenv';
+import { otelSDK } from "./tracing";
+
 
 const envconfig = dotenv.config({ path: ['.env', '.env.local'] });
 
 async function bootstrap() {
+  otelSDK.start();
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn', 'log', 'debug', 'verbose', 'log'],
   });
