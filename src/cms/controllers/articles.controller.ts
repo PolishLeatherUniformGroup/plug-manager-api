@@ -1,51 +1,47 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { ApiAcceptedResponse, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { CreateArticle } from '../dtos/create-article.dto';
-import { Publish } from '../dtos/publish.dto';
-import { Reorder } from '../dtos/reorder.dto';
-import { Reparent } from '../dtos/reparent.dto';
-import { Article } from '../dtos/article.dto';
+import { Article, CreateArticle, GetTranslatedArticle, PublishArticle, ReparentArticle, UpdateArticle } from '../dtos/article.dto';
 
 @Controller('articles')
 @ApiTags('CMS')
 export class ArticlesController {
+    constructor() { }
 
     @Post()
-    @ApiCreatedResponse({ description: 'Article created' })
+    @ApiCreatedResponse({ description: 'The record has been successfully created.' })
     createArticle(@Body() createArticleDto: CreateArticle) {
-        return 'Article created';
+        throw new Error('Not implemented');
     }
 
     @Put(':id')
-    @ApiAcceptedResponse({ description: 'Article updated' })
-    updateArticle(@Param('id') id: number, @Body() updateArticleDto: CreateArticle) {
-        return 'Article updated';
+    @ApiAcceptedResponse({ description: 'The record has been successfully updated.' })
+    updateArticle(id, @Body() ArticleDto: UpdateArticle) {
+        throw new Error('Not implemented');
     }
 
     @Put(':id/publication')
-    @ApiAcceptedResponse({ description: 'Article published' })
-    publishArticle(@Param('id') id: number, @Body() publishDto: Publish) {
-        return 'Article published';
-    }
-
-    @Put(':id/order')
-    @ApiAcceptedResponse({ description: 'Article order updated' })
-    updateArticleOrder(@Param('id') id: number, @Body() reorderDto: Reorder) {
-        return 'Article order updated';
+    @ApiAcceptedResponse({ description: 'The record has been successfully updated.' })
+    publishingArticle(@Param('id') id: number, @Body() publishDto: PublishArticle) {
+        throw new Error('Not implemented');
     }
 
     @Put(':id/parent')
-    @ApiAcceptedResponse({ description: 'Article parent updated' })
-    updateArticleParent(@Param('id') id: number, @Body() reparentDto: Reparent) {
-        return 'Article parent updated';
+    @ApiAcceptedResponse({ description: 'The record has been successfully updated.' })
+    reparentArticle(@Param('id') id: number, @Body() reparentDto: ReparentArticle) {
+        throw new Error('Not implemented');
     }
 
-    @Get(':id')
-    @ApiOkResponse({ description: 'Article retrieved', type: Article, isArray: false })
-    getArticle(@Param('id') id: number): Promise<Article[]> {
-        throw new Error('Method not implemented.');
+    @Get(':slug')
+    @ApiOkResponse({ description: 'The record has been successfully retrieved.', type: Article })
+    getArticle(@Param('slug') slug: string) {
+        throw new Error('Not implemented');
     }
+
+    @Get(':slug/content/:lang')
+    @ApiOkResponse({ description: 'The record has been successfully retrieved.', type: GetTranslatedArticle })
+    getArticleContent(@Param('slug') slug: string,@Param('lang') lang: string) {
+        throw new Error('Not implemented');
+    }
+
+    
 }
-
-
-

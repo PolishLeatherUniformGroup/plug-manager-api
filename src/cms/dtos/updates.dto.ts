@@ -2,19 +2,15 @@ import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 export class Updates {
     @ApiProperty()
-    createdBy: string;
-    @ApiProperty()
     createdAt: Date;
-
-    @ApiPropertyOptional()
-    updatedBy?: string;
-
+    @ApiProperty()
+    createdBy: string;
     @ApiPropertyOptional()
     updatedAt?: Date;
-
+    @ApiPropertyOptional()
+    updatedBy?: string;
+    @ApiPropertyOptional()
+    publihedAt?: Date;
     @ApiPropertyOptional()
     publishedBy?: string;
-
-    @ApiPropertyOptional()
-    publishedAt?: Date;
 }
