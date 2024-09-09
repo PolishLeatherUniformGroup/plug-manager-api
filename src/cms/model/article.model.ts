@@ -4,6 +4,7 @@ import { Updates } from "./udates.model";
 import { Section } from "./section.model";
 import { ArticleContent } from "./article-content.model";
 import { ArticleMetadata } from "./article-metadata.model";
+import { BoolBitTransformer } from "../../shared/bit-transfomer";
 
 export class Article{
     @PrimaryGeneratedColumn()
@@ -15,7 +16,7 @@ export class Article{
     @Column({type:"int"})
     order: number;
 
-    @Column({type:"bit" , default: false})
+    @Column({type:"bit" , default: false, transformer: new BoolBitTransformer()})
     isPublished: boolean;
 
 

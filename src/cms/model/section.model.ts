@@ -3,6 +3,7 @@ import { SectionMetadata } from "./section-metadata.model";
 import { SectionContent } from "./section-content.model";
 import { Updates } from "./udates.model";
 import { Article } from "./article.model";
+import { BoolBitTransformer } from "../../shared/bit-transfomer";
 
 export class Section{
     @PrimaryGeneratedColumn({type: "bigint", name: "section_id"})
@@ -14,10 +15,10 @@ export class Section{
     @Column({type:"int"})
     order: number;
 
-    @Column({type:"bit" , default: false})
+    @Column({type:"bit" , default: false, transformer: new BoolBitTransformer()})
     isPublished: boolean;
 
-    @Column({type:"bit" , default: false})
+    @Column({type:"bit" , default: false, transformer: new BoolBitTransformer()})
     showInMenu: boolean;
 
     @OneToMany(() => Section, section => section.children)
