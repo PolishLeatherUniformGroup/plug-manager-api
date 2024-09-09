@@ -1,12 +1,16 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 export class ConfigValue {
     @ApiProperty()
     key: string;
     @ApiProperty()
-    value: string;
+    group: string;
     @ApiProperty()
-    description: string;
+    name: string;
+    @ApiProperty()
+    value: string;
+    @ApiPropertyOptional()
+    description?: string;
     @ApiProperty()
     valueType: "string" | "number" | "boolean";
 }

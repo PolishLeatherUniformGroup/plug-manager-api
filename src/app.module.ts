@@ -14,7 +14,6 @@ import { JwtStrategy } from "./jwt.strategy";
 import { SettingsModule } from './settings/settings.module';
 import { EventEmitterModule } from "@nestjs/event-emitter";
 import { OpenTelemetryModule } from 'nestjs-otel';
-
 @Module({
   imports: [
     OpenTelemetryModule.forRoot({

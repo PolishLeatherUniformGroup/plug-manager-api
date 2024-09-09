@@ -1,42 +1,44 @@
-import { Column, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
-import { SectionMetadata } from "./section-metadata.model";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { Metadata } from "./metadata.model";
 import { SectionContent } from "./section-content.model";
 import { Updates } from "./udates.model";
 import { Article } from "./article.model";
 import { BoolBitTransformer } from "../../shared/bit-transfomer";
 
-export class Section{
-    @PrimaryGeneratedColumn({type: "bigint", name: "section_id"})
+@Entity("cms_section")
+export class Section {
+    @PrimaryGeneratedColumn({ type: "bigint" })
     id: number;
 
     @Unique(["slug"])
+    @Column({ type: "varchar", length: 150 })
     slug: string;
 
-    @Column({type:"int"})
+    @Column({ type: "int" })
     order: number;
 
-    @Column({type:"bit" , default: false, transformer: new BoolBitTransformer()})
+    @Column({ type: "bit", default: false, transformer: new BoolBitTransformer() })
     isPublished: boolean;
 
-    @Column({type:"bit" , default: false, transformer: new BoolBitTransformer()})
+    @Column({ type: "bit", default: false, transformer: new BoolBitTransformer() })
     showInMenu: boolean;
 
-    @OneToMany(() => Section, section => section.children)
-    parent?: Section;
+    @Column(() => Metadata)
+    metadata?: Metadata;
 
-    @ManyToOne(() => Section, section => section.parent)
-    children?: Section[];
-
-    @OneToOne(() => SectionMetadata, metadata => metadata.section, {cascade: true, eager: true})    
-    metadata?: SectionMetadata;
-
-    @OneToMany(() => SectionContent, content => content.section, {cascade: true, eager: true})
+    @OneToMany(() => SectionContent, content => content.section, { cascade: true, })
     content?: SectionContent[];
 
-    @Column(()=> Updates)
+    @Column(() => Updates)
     updates: Updates;
 
-    @OneToMany(() => Article, article => article.parent)
+    @OneToMany(() => Article, article => article.parent, { cascade: true })
     articles: Article[];
+
+    @ManyToOne(() => Section, section => section.children, { nullable: true })
+    parent?: Section;
+
+    @OneToMany(() => Section, section => section.parent)
+    children?: Section[];
 
 }

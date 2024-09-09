@@ -1,35 +1,40 @@
-import { Column, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
 import { SectionContent } from "./section-content.model";
 import { Updates } from "./udates.model";
 import { Section } from "./section.model";
 import { ArticleContent } from "./article-content.model";
-import { ArticleMetadata } from "./article-metadata.model";
 import { BoolBitTransformer } from "../../shared/bit-transfomer";
+import { Metadata } from "./metadata.model";
 
-export class Article{
-    @PrimaryGeneratedColumn()
+@Entity("cms_article")
+export class Article {
+    @PrimaryGeneratedColumn({ type: "bigint" })
     id: number;
 
     @Unique(["slug"])
+    @Column({ type: "varchar", length: 150 })
     slug: string;
 
-    @Column({type:"int"})
+    @Column({ type: "int" })
     order: number;
 
-    @Column({type:"bit" , default: false, transformer: new BoolBitTransformer()})
+    @Column({ type: "bit", default: false, transformer: new BoolBitTransformer() })
     isPublished: boolean;
 
-
     @ManyToOne(() => Section, section => section.articles)
+    @JoinColumn({ name: "parentId" })
     parent: Section;
 
-    @OneToOne(() => ArticleMetadata, metadata => metadata.article, {cascade: true, eager: true})    
-    metadata?: ArticleMetadata;
+    @Column(() => Metadata)
+    metadata?: Metadata
 
-    @OneToMany(() => SectionContent, content => content.section, {cascade: true, eager: true})
+    @Column({ type: "bigint", nullable: false })
+    parentId: number;
+
+    @OneToMany(() => ArticleContent, content => content.article, { cascade: true, eager: true })
     content?: ArticleContent[];
 
-    @Column(()=> Updates)
+    @Column(() => Updates)
     updates: Updates;
 
 }

@@ -32,9 +32,9 @@ export class FeaturesController {
         await this.featureService.addFeature(feature);
     }
 
-    @Put(':id/switch')
-    public async switch(@Param('id') id: number, @Body() body: Switch) {
-        Logger.log(`Received switch request for feature ${id} to ${body.enabled}`);
-        await this.featureService.switch(id, body);
+    @Put(':key/switch')
+    public async switch(@Param('ikey') key: string, @Body() body: Switch) {
+        Logger.log(`Received switch request for feature ${key} to ${body.enabled}`);
+        await this.featureService.switch(key, body);
     }
 }

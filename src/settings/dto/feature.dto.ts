@@ -2,9 +2,6 @@ import { ApiProperty } from "@nestjs/swagger";
 
 export class Feature {
     @ApiProperty()
-    id: number;
-
-    @ApiProperty()
     key: string
 
     @ApiProperty()

@@ -1,12 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn, Unique } from 'typeorm';
 import { BoolBitTransformer } from '../../shared/bit-transfomer';
 @Entity('settings_features')
 export class ApplicationFeature {
-    @PrimaryGeneratedColumn({ type: 'bigint' })
-    id: number;
-
-    @Column({ type: "varchar", length: 255 })
-    @Unique(["key"])
+    @PrimaryColumn({ type: "varchar", length: 255 })
     key: string;
     @Column({ type: "varchar", length: 255 })
     name: string;

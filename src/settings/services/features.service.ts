@@ -5,7 +5,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Feature as FeatureDto } from '../dto/feature.dto';
 import { AddFeature } from '../dto/add-feature.dto';
 import { Switch } from '../dto/switch.dto';
-import { log } from 'console';
 
 
 @Injectable()
@@ -18,9 +17,8 @@ export class FeaturesService {
         const entities: ApplicationFeature[] = await this.repository.find();
         this.logger.debug(`Found ${entities.length} features`);
         return entities.map(entity => {
-            this.logger.debug(`Mapping feature ${entity.id}: ${JSON.stringify(entity)}`);
+            this.logger.debug(`Mapping feature ${entity.key}: ${JSON.stringify(entity)}`);
             return {
-                id: entity.id,
                 key: entity.key,
                 name: entity.name,
                 description: entity.description,
@@ -37,8 +35,8 @@ export class FeaturesService {
         await this.repository.save(entity);
     }
 
-    public async switch(id: number, body: Switch) {
-        var entity = await this.repository.findOneBy({ id });
+    public async switch(key: string, body: Switch) {
+        var entity = await this.repository.findOneBy({ key: key });
         entity.enabled = body.enabled;
         await this.repository.save(entity);
     }
@@ -49,7 +47,6 @@ export class FeaturesService {
             return null;
         }
         return {
-            id: entity.id,
             key: entity.key,
             name: entity.name,
             description: entity.description,

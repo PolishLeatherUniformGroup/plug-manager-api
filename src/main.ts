@@ -8,7 +8,7 @@ import { otelSDK } from "./tracing";
 const envconfig = dotenv.config({ path: ['.env', '.env.local'] });
 
 async function bootstrap() {
-  otelSDK.start();
+  //otelSDK.start();
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn', 'log', 'debug', 'verbose', 'log'],
   });

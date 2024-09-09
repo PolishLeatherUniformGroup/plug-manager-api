@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { SettingValue } from '../model/config.model';
 import { Repository } from 'typeorm';
 import { ConfigValue } from '../dto/config-value.dto';
-import { log } from 'console';
 
 @Injectable()
 export class ConfigurationService {
@@ -28,6 +27,8 @@ export class ConfigurationService {
             return {
                 key: config.key,
                 value: config.value,
+                name: config.name,
+                group: config.group,
                 description: config.description,
                 valueType: config.valueType
             } as ConfigValue;
