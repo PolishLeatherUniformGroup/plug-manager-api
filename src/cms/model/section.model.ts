@@ -1,47 +1,41 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
-import { Updates } from "./updates.model";
-import { Metadata } from "./metadata.model";
+import { Column, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { SectionMetadata } from "./section-metadata.model";
+import { SectionContent } from "./section-content.model";
+import { Updates } from "./udates.model";
 import { Article } from "./article.model";
-import { Language } from "./language.model";
 
-@Entity('cms_sections')
-export class Section {
-
-    @PrimaryGeneratedColumn({ type: 'bigint' })
+export class Section{
+    @PrimaryGeneratedColumn({type: "bigint", name: "section_id"})
     id: number;
 
-    @Column({ type: 'varchar', length: 64 })
     @Unique(["slug"])
     slug: string;
 
-    @Column({ type: 'varchar', length: 255 })
-    title: string;
-
-    @Column({ type: 'bit', default: false })
-    isPublished: boolean;
-    @Column({ type: 'bit', default: false })
-    showInMenu: boolean;
-
-    @Column({ type: 'int', default: 0 })
+    @Column({type:"int"})
     order: number;
 
-    @Column(() => Language)
-    language: Language;
+    @Column({type:"bit" , default: false})
+    isPublished: boolean;
 
-    @Column(() => Updates)
-    updates: Updates;
+    @Column({type:"bit" , default: false})
+    showInMenu: boolean;
 
-    @Column(() => Metadata)
-    metadata: Metadata;
-
-    @ManyToOne((type) => Section, (section) => section.children)
+    @OneToMany(() => Section, section => section.children)
     parent?: Section;
 
-    @OneToMany((type) => Section, (section) => section.parent)
-    children: Section[]
+    @ManyToOne(() => Section, section => section.parent)
+    children?: Section[];
 
-    @OneToMany(() => Article, article => article.section)
+    @OneToOne(() => SectionMetadata, metadata => metadata.section, {cascade: true, eager: true})    
+    metadata?: SectionMetadata;
+
+    @OneToMany(() => SectionContent, content => content.section, {cascade: true, eager: true})
+    content?: SectionContent[];
+
+    @Column(()=> Updates)
+    updates: Updates;
+
+    @OneToMany(() => Article, article => article.parent)
     articles: Article[];
-
 
 }

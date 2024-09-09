@@ -1,71 +1,61 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
-import { SectionsService } from '../services/sections.service';
 import { ApiAcceptedResponse, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { CreateSection } from '../dtos/create-section.dto';
-import { Section } from '../dtos/section.dto';
-import { Publish } from '../dtos/publish.dto';
-import { Reparent } from '../dtos/reparent.dto';
-import { SectionResult } from '../dtos/get-section.dto';
-import { ArticleResult } from '../dtos/get-article.dto';
-import { Reorder } from '../dtos/reorder.dto';
-import { ArticleItem } from '../dtos/article-item.dto';
+import { ArticleInfo, CreateSection, GetTranslatedSection, PublishSection, ReparentSection, Section, UpdateSection } from '../dtos/section.dto';
+
 
 @Controller('sections')
 @ApiTags('CMS')
 export class SectionsController {
 
-    constructor(private readonly sectionsService: SectionsService) { }
+    constructor() { }
 
     @Post()
     @ApiCreatedResponse({ description: 'The record has been successfully created.' })
     createSection(@Body() createSectionDto: CreateSection) {
-        return this.sectionsService.createSection(createSectionDto);
+        throw new Error('Not implemented');
     }
 
     @Put(':id')
     @ApiAcceptedResponse({ description: 'The record has been successfully updated.' })
-    updateSection(id, @Body() sectionDto: CreateSection) {
-        return this.sectionsService.updateSection(id, sectionDto);
+    updateSection(id, @Body() sectionDto: UpdateSection) {
+        throw new Error('Not implemented');
     }
 
     @Put(':id/publication')
     @ApiAcceptedResponse({ description: 'The record has been successfully updated.' })
-    publishingSection(@Param('id') id: number, @Body() publishDto: Publish) {
-        if (publishDto.published) {
-            return this.sectionsService.publishSection(id, publishDto);
-        } else {
-            return this.sectionsService.unPublishSection(id, publishDto);
-        }
+    publishingSection(@Param('id') id: number, @Body() publishDto: PublishSection) {
+        throw new Error('Not implemented');
     }
 
     @Put(':id/parent')
     @ApiAcceptedResponse({ description: 'The record has been successfully updated.' })
-    reparentSection(@Param('id') id: number, @Body() reparentDto: Reparent) {
-        return this.sectionsService.reparentSection(id, reparentDto);
+    reparentSection(@Param('id') id: number, @Body() reparentDto: ReparentSection) {
+        throw new Error('Not implemented');
     }
 
-    @Put(':id/order')
-    @ApiAcceptedResponse({ description: 'The record has been successfully updated.' })
-    reorderSection(@Param('id') id: number, @Body() reorderDto: Reorder) {
-        return this.sectionsService.reorderSection(id, reorderDto);
-    }
 
-    @Get(':id')
-    @ApiOkResponse({ description: 'The record has been successfully retrieved.', type: SectionResult })
-    getSection(@Param('id') id: number) {
-        return this.sectionsService.getSection(id);
+    @Get(':slug')
+    @ApiOkResponse({ description: 'The record has been successfully retrieved.', type: Section })
+    getSection(@Param('slug') slug: string) {
+        throw new Error('Not implemented');
     }
 
     @Get()
-    @ApiOkResponse({ description: 'The record has been successfully retrieved.', type: SectionResult, isArray: true })
+    @ApiOkResponse({ description: 'The record has been successfully retrieved.', type: Section, isArray: true })
     getSections() {
-        return this.sectionsService.getSections();
+        throw new Error('Not implemented');
     }
 
-    @Get(':id/articles')
-    @ApiOkResponse({ description: 'The record has been successfully retrieved.', type: ArticleItem, isArray: true })
-    getSectionArticles(@Param('id') id: number) {
-        return this.sectionsService.getSectionArticles(id);
+    @Get(':slug/content/:lang')
+    @ApiOkResponse({ description: 'The record has been successfully retrieved.', type: GetTranslatedSection })
+    getSectionContent(@Param('slug') slug: string,@Param('lang') lang: string) {
+        throw new Error('Not implemented');
+    }
+
+    @Get(':slug/articles')
+    @ApiOkResponse({ description: 'The record has been successfully retrieved.', type: ArticleInfo, isArray: true })
+    getSectionArticles(@Param('slug') slug: string) {
+        throw new Error('Not implemented');
     }
 }
 

@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryColumn } from "typeorm";
 
 @Entity('settings_values')
-export class Config {
+export class SettingValue {
 
     @PrimaryColumn({ type: "varchar", length: 255 })
     key: string;

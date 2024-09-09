@@ -1,14 +1,8 @@
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { Updates } from "./updates.dto";
+import { ApiPropertyOptional } from "@nestjs/swagger";
 
 export class Metadata {
-
+    @ApiPropertyOptional()
+    keywords?: string;
     @ApiPropertyOptional()
     description?: string;
-
-    @ApiPropertyOptional()
-    keywords?: string[];
-
-    @ApiProperty()
-    history: Updates;
 }

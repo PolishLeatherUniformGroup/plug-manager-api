@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Config } from '../model/config.model';
+import { SettingValue } from '../model/config.model';
 import { Repository } from 'typeorm';
 import { ConfigValue } from '../dto/config-value.dto';
 import { log } from 'console';
@@ -9,7 +9,7 @@ import { log } from 'console';
 export class ConfigurationService {
     private readonly logger = new Logger(ConfigurationService.name);
     private installedKey: string = 'app_installed';
-    constructor(@InjectRepository(Config) private readonly repository: Repository<Config>) { }
+    constructor(@InjectRepository(SettingValue) private readonly repository: Repository<SettingValue>) { }
 
     async isInstalled(): Promise<boolean> {
         var val = await this.repository.findOne({ where: { key: this.installedKey } });
