@@ -27,24 +27,33 @@ export class SeedService {
             { name: 'Ochrona danych', title: 'Ochrona danych', language: 'pl' },
             { name: 'Data protection', title: 'Data protection', language: 'en' }
         ], orgSection);
-        const eventsSection = await this.insertSection('events', 0, [
+        const eventsSection = await this.insertSection('events', 1, [
             { name: 'Wydarzenia', title: 'Wydarzenia', language: 'pl' },
             { name: 'Events', title: 'Events', language: 'en' }
         ]);
-        const membersZone = await this.insertSection('members', 0, [
+        const membersZone = await this.insertSection('members', 2, [
             { name: 'Strefa członka', title: 'Strefa członka', language: 'pl' },
             { name: 'Member zone', title: 'Member zone', language: 'en' }
         ]);
 
-        const policy = await this.insertArticle(privacySection, 'privacy-policy', 0, [
+        await this.insertArticle(privacySection, 'privacy-policy', 0, [
             { name: 'Polityka prywatności', title: 'Polityka prywatności', text: 'Polityka prywatności', language: 'pl' },
             { name: 'Privacy policy', title: 'Privacy policy', text: 'Privacy policy', language: 'en' }
         ]);
-        this.logger.log(`Policy id: ${policy}`);
 
         await this.insertArticle(privacySection, 'gdpr-policy', 1, [
             { name: 'Informacja RODO', title: 'Informacja RODO', text: 'Klauzula informacyjna RODO', language: 'pl' },
             { name: 'GDPR information', title: 'GDPR information', text: 'GDPR Caluse', language: 'en' }
+        ]);
+
+        await this.insertArticle(orgSection, 'join', 0, [
+            { name: 'Dołącz', title: 'Dołącz', text: '', language: 'pl' },
+            { name: 'Join us', title: 'Join us', text: '', language: 'en' }
+        ]);
+
+        await this.insertArticle(orgSection, 'contact', 1, [
+            { name: 'Kontakt', title: 'Kontakt', text: '', language: 'pl' },
+            { name: 'Contact', title: 'Contact', text: '', language: 'en' }
         ]);
 
     }
@@ -72,10 +81,10 @@ export class SeedService {
                 createdAt: new Date(),
                 createdBy: "System"
             };
-            if(parent) {
-            const parentSection = await this.sectionRepository.findOne({ where: { id: parent }, relations: ['children'] });
+            if (parent) {
+                const parentSection = await this.sectionRepository.findOne({ where: { id: parent }, relations: ['children'] });
 
-            section.parent = parentSection;
+                section.parent = parentSection;
             }
             await this.sectionRepository.save(section);
             return section.id;

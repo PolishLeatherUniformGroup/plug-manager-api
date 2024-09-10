@@ -2,7 +2,7 @@ import { ApiProperty, ApiPropertyOptional, OmitType, PickType } from "@nestjs/sw
 import { Metadata } from "./metadata.dto";
 import { Updates } from "./updates.dto";
 
-export class Section{
+export class Section {
     @ApiProperty()
     id: number;
     @ApiProperty()
@@ -30,7 +30,7 @@ export class SectionTranslation {
     title: string;
 }
 
-export class ArticleInfo{
+export class ArticleInfo {
     @ApiProperty()
     slug: string;
     @ApiProperty()
@@ -68,7 +68,11 @@ export class GetTranslatedSection extends PickType(Section, ['id', 'slug', 'isPu
     content: SectionTranslation;
 }
 
-export class MenuItem extends  PickType(GetTranslatedSection,['slug','content']) {
+export class MenuItem {
+    @ApiProperty()
+    slug: string;
+    @ApiProperty()
+    name: string;
     @ApiProperty()
     pages: ArticleInfo[];
     @ApiProperty()

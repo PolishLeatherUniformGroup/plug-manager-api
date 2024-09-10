@@ -1,13 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Section } from '../model/section.model';
 import { Repository } from 'typeorm';
 import { ArticleInfo, GetTranslatedSection, MenuItem, SectionTranslation } from '../dtos/section.dto';
-import { GetTranslatedArticle } from '../dtos/article.dto';
+import { Section as SectionDto } from '../dtos/section.dto';
 
 @Injectable()
 export class SectionsService {
-
+    private readonly logger = new Logger(SectionsService.name);
 
     constructor(
         @InjectRepository(Section)
@@ -15,13 +15,11 @@ export class SectionsService {
     ) { }
 
 
-    async getSections(lang: string) {
+    async getSections() {
         const sections = await this.sectionRepository.find({
             where: {
                 parent: null,
-                isPublished: true,
-                content: { language: lang }
-            }, relations: ['content', 'parent']
+            }, relations: ['content', 'parent'], order: { order: 'ASC' }
         });
         return sections.filter(x => x.parent === undefined || x.parent === null).map(section => {
             return {
@@ -30,10 +28,7 @@ export class SectionsService {
                 order: section.order,
                 isPublished: section.isPublished,
                 showInMenu: section.showInMenu,
-                metadata: section.metadata,
-                content: section.content[0] as SectionTranslation,
-                updates: section.updates
-            } as GetTranslatedSection;
+            } as SectionDto;
         });
     }
     async getSubSections(lang: string, slug: string) {
@@ -89,38 +84,28 @@ export class SectionsService {
                 showInMenu: true,
                 parent: null,
                 content: { language: lang },
-                children: {
-                    content:{
-                        language: lang
-                    }
-                },
-                articles:{
-                    content:{
-                        language: lang
-                    }
-                }
-            }, relations: ['content', 'parent', 'children', 'articles', 'articles.content', 'children.articles', 'children.content' ,'children.articles.content']
+            }, relations: ['content', 'parent', 'children', 'articles', 'articles.content', 'children.articles', 'children.content', 'children.articles.content']
         });
- 
-        return sections.filter(x=>x.parent === null).map(section => {
+        this.logger.log(`Found ${sections.length} sections`);
+        return sections.filter(x => x.parent === null).map(section => {
             return {
                 slug: section.slug,
-                content: section.content[0] as SectionTranslation,
+                name: section.content[0].name,
                 pages: section.articles.map(article => {
                     return {
                         slug: article.slug,
-                        name: article.content[0].name,
+                        name: article.content.find(t => t.language === lang).name,
                         isPublished: article.isPublished
                     } as ArticleInfo;
                 }),
                 submenu: section.children.map(child => {
                     return {
                         slug: child.slug,
-                        content: child.content[0] as SectionTranslation,
+                        name: child.content.find(t => t.language === lang).name,
                         pages: child.articles.map(article => {
                             return {
                                 slug: article.slug,
-                                name: article.content[0].name,
+                                name: article.content.find(t => t.language === lang).name,
                                 isPublished: article.isPublished
                             } as ArticleInfo;
                         }),
@@ -130,7 +115,7 @@ export class SectionsService {
             } as MenuItem;
         });
     }
-    
+
     /*
     submenu: section.children.map(child => {
         return {
