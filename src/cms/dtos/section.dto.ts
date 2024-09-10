@@ -34,6 +34,8 @@ export class ArticleInfo{
     @ApiProperty()
     slug: string;
     @ApiProperty()
+    name: string;
+    @ApiProperty()
     isPublished: boolean;
 }
 
@@ -64,4 +66,11 @@ export class ReparentSection extends PickType(Section, ['parent']) {
 export class GetTranslatedSection extends PickType(Section, ['id', 'slug', 'isPublished', 'showInMenu', 'updates', 'parent']) {
     @ApiProperty()
     content: SectionTranslation;
+}
+
+export class MenuItem extends  PickType(GetTranslatedSection,['slug','content']) {
+    @ApiProperty()
+    pages: ArticleInfo[];
+    @ApiProperty()
+    submenu: MenuItem[];
 }

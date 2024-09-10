@@ -5,8 +5,6 @@ import { Repository } from 'typeorm';
 import { SectionContent } from '../model/section-content.model';
 import { ArticleContent } from '../model/article-content.model';
 import { Article } from '../model/article.model';
-import { log } from 'console';
-import { Err } from '@opentelemetry/instrumentation-http';
 
 
 @Injectable()
@@ -29,6 +27,14 @@ export class SeedService {
             { name: 'Ochrona danych', title: 'Ochrona danych', language: 'pl' },
             { name: 'Data protection', title: 'Data protection', language: 'en' }
         ], orgSection);
+        const eventsSection = await this.insertSection('events', 0, [
+            { name: 'Wydarzenia', title: 'Wydarzenia', language: 'pl' },
+            { name: 'Events', title: 'Events', language: 'en' }
+        ]);
+        const membersZone = await this.insertSection('members', 0, [
+            { name: 'Strefa członka', title: 'Strefa członka', language: 'pl' },
+            { name: 'Member zone', title: 'Member zone', language: 'en' }
+        ]);
 
         const policy = await this.insertArticle(privacySection, 'privacy-policy', 0, [
             { name: 'Polityka prywatności', title: 'Polityka prywatności', text: 'Polityka prywatności', language: 'pl' },
@@ -66,7 +72,11 @@ export class SeedService {
                 createdAt: new Date(),
                 createdBy: "System"
             };
+            if(parent) {
+            const parentSection = await this.sectionRepository.findOne({ where: { id: parent }, relations: ['children'] });
 
+            section.parent = parentSection;
+            }
             await this.sectionRepository.save(section);
             return section.id;
         } else {
