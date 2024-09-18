@@ -6,8 +6,7 @@ import jwt from 'jsonwebtoken';
 export class GoogleCardService {
     private readonly httpClient: GoogleAuth;
     private credentials = require(process.env.GOOGLE_APPLICATION_CREDENTIALS);
-    private issuerId = process.env.ISSUER_ID;
-    private client
+    private issuerId = process.env.GOOGLE_PASS_ISSUER_ID;
     private readonly baseUrl = 'https://walletobjects.googleapis.com/walletobjects/v1';
 
     constructor() {
