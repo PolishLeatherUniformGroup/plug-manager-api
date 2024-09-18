@@ -1,0 +1,22 @@
+{
+    "id": "ISSUER_ID.CLASS_ID",
+    "classTemplateInfo": {
+      "cardTemplateOverride": {
+        "cardRowTemplateInfos": [
+          {
+            "oneItem": {
+              "item": {
+                "firstValue": {
+                  "fields": [
+                    {
+                      "fieldPath": "object.textModulesData['nr_karty']"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  }

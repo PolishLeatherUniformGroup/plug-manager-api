@@ -20,6 +20,7 @@ import { MembershipFee } from "./model/members/membership-fee.model";
 import { Suspension } from "./model/members/suspension.model";
 import { Expulsion } from "./model/members/expulsion.model";
 import { IntgrationEventListeners } from "./integration/listeners";
+import { GoogleCardService } from './services/google-card.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([
@@ -38,7 +39,7 @@ import { IntgrationEventListeners } from "./integration/listeners";
     events: [...Events],
   })],
   controllers: [MembersController, ApplicantsController, SettingsController],
-  providers: [...Services, ...ApplicantDomain, ...MemberDomain, ...IntgrationEventListeners],
+  providers: [...Services, ...ApplicantDomain, ...MemberDomain, ...IntgrationEventListeners, GoogleCardService],
 })
 export class ManagementModule implements OnModuleInit {
   constructor(private readonly eventStore: EventStore) { }

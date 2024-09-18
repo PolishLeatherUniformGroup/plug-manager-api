@@ -4,4 +4,6 @@ export class MemberActivatedEvent {
     lastName: string;
     email: string;
     phone?: string;
+    googleLink?: string;
+    appleLink?: string;
 }

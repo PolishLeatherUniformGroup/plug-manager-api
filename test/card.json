@@ -1,0 +1,40 @@
+{
+    "id": "ISSUER_ID.OBJECT_ID",
+    "classId": "ISSUER_ID.GENERIC_CLASS_ID",
+    "logo": {
+      "sourceUri": {
+        "uri": "https://plug.org.pl/wp-content/uploads/2024/02/Logo_color_new.png"
+      },
+      "contentDescription": {
+        "defaultValue": {
+          "language": "en-US",
+          "value": "LOGO_IMAGE_DESCRIPTION"
+        }
+      }
+    },
+    "cardTitle": {
+      "defaultValue": {
+        "language": "en-US",
+        "value": "Polish Leather Uniform Group"
+      }
+    },
+    "header": {
+      "defaultValue": {
+        "language": "en-US",
+        "value": "Jan Kowalski"
+      }
+    },
+    "textModulesData": [
+      {
+        "id": "nr_karty",
+        "header": "NR KARTY",
+        "body": "PLUG1112"
+      }
+    ],
+    "barcode": {
+      "type": "QR_CODE",
+      "value": "BARCODE_VALUE",
+      "alternateText": ""
+    },
+    "hexBackgroundColor": "#3c4148"
+  }
